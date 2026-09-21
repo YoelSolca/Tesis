@@ -1,0 +1,14 @@
+﻿################################################################################
+# Este archivo .gitignore ha sido creado automáticamente por Microsoft(R) Visual Studio.
+################################################################################
+
+/Backend.Api/.vs/Backend.Api.slnx
+/Backend.Api/Backend.Api/obj/Debug/net9.0
+/Backend.Api/Backend.Api/obj
+/Backend.Api/Backend.Application/obj
+/Backend.Api/Backend.Domain/obj
+/Backend.Api/Backend.Infrastructure/obj
+/Backend.Api/Backend.Api/bin/Debug/net9.0
+/Backend.Api/Backend.Application/bin/Debug/net9.0
+/Backend.Api/Backend.Domain/bin/Debug/net9.0
+/Backend.Api/Backend.Infrastructure/bin/Debug/net9.0
