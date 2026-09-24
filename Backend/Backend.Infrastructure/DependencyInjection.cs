@@ -18,6 +18,7 @@ namespace Backend.Infrastructure
             });
 
             services.AddScoped<IPersonaRepository, PersonaRepository>();
+            services.AddScoped<IPsicopedagogoRepository, PsicopedagogoRepository>();
 
             return services;
         }

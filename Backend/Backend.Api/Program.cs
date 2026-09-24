@@ -11,6 +11,19 @@ builder.Services.AddProblemDetails();
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", optionsCORS =>
+    {
+        optionsCORS.WithOrigins(allowedOrigins)
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+    });
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,6 +43,9 @@ else
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("CorsPolicy");
+
 app.UseAuthorization();
 app.MapControllers();
 
