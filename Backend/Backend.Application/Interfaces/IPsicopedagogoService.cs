@@ -5,7 +5,7 @@ namespace Backend.Application.Interfaces
 {
     public interface IPsicopedagogoService
     {
-        Task<Result<PsicopedagogoDto>> CreatesicopedagogoAsync(CreatePsicopedagogoRequest request, CancellationToken ct = default);
+        Task<Result<PsicopedagogoDto>> CreatepsicopedagogoAsync(CreatePsicopedagogoRequest request, CancellationToken ct = default);
 
         Task<Result<PsicopedagogoDto>> GetByPsicopedagogoIdAsync(int psicopedagogoId, CancellationToken ct = default);
 

@@ -11,9 +11,6 @@ namespace Backend.Infrastructure.Data.Configurations
             builder.ToTable("Psicopedagogo");
 
             builder.HasKey(p => p.PersonaId);
-
-            builder.Property(p => p.CorreoElectronico).IsRequired().HasMaxLength(50);
-            builder.Property(p => p.Contrasenia).IsRequired().HasMaxLength(16);
             builder.Property(p => p.Avatar).IsRequired().HasMaxLength(250);
 
             builder.HasOne(p => p.Persona)

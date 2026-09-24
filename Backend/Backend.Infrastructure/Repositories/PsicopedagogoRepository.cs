@@ -22,8 +22,6 @@ namespace Backend.Infrastructure.Repositories
             var existingPsicopedagogo = await context.Psicopedagogo.FirstOrDefaultAsync(p => p.PersonaId == psicopedagogo.PersonaId, ct);
             if (existingPsicopedagogo == null) return;
 
-            existingPsicopedagogo.CorreoElectronico = psicopedagogo.CorreoElectronico;
-            existingPsicopedagogo.Contrasenia = psicopedagogo.Contrasenia;
             existingPsicopedagogo.Avatar = psicopedagogo.Avatar;
 
             //existingPsicopedagogo.FechaExpiracionTokenRestablecimiento = psicopedagogo.FechaExpiracionTokenRestablecimiento;

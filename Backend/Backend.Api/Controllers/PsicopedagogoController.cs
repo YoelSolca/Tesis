@@ -2,6 +2,7 @@
 using Backend.Application.Common;
 using Backend.Application.DTO;
 using Backend.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,11 +22,12 @@ namespace Backend.Api.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ProducesResponseType<PsicopedagogoDto>(StatusCodes.Status201Created)]
         public async Task<IActionResult> Create(CreatePsicopedagogoRequest request, CancellationToken ct)
         {
-            var result = await psicopedagogoService.CreatesicopedagogoAsync(request, ct);
-            return CreatedAtAction(nameof(GetById), new { psicopedagogoId = result.Value!.personaId }, result.Value);
+            var result = await psicopedagogoService.CreatepsicopedagogoAsync(request, ct);
+            return CreatedAtAction(nameof(GetById), new { psicopedagogoId = result.Value!.PersonaId }, result.Value);
         }
 
         [HttpPut("{psicopedagogoId:int}")]

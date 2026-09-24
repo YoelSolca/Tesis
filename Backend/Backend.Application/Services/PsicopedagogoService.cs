@@ -14,14 +14,14 @@ namespace Backend.Application.Services
 {
     public class PsicopedagogoService(
         IPsicopedagogoRepository repository,
+        IPasswordHasher contraseniaHasher,
+        //IUsuarioActual usuarioActual,
         ILogger<PsicopedagogoService> logger): IPsicopedagogoService
     {
-        public async Task<Result<PsicopedagogoDto>> CreatesicopedagogoAsync(CreatePsicopedagogoRequest request, CancellationToken ct = default)
+        public async Task<Result<PsicopedagogoDto>> CreatepsicopedagogoAsync(CreatePsicopedagogoRequest request, CancellationToken ct = default)
         {
             var psicopedagogo = new Psicopedagogo
             {
-                CorreoElectronico = request.CorreoElectronico,
-                Contrasenia = request.Contrasenia,
                 Avatar = request.Avatar,
                 Persona = new Persona
                 {
@@ -31,6 +31,11 @@ namespace Backend.Application.Services
                     Documento = request.Documento,
                     Genero = request.Genero,
                     FechaNacimiento = request.FechaNacimiento
+                },
+                Usuario = new Usuario
+                {
+                    CorreoElectronico = request.CorreoElectronico,
+                    Contrasenia = contraseniaHasher.Hash(request.Contrasenia),
                 }
             };
 
@@ -60,9 +65,13 @@ namespace Backend.Application.Services
             var psicopedagogo = new Psicopedagogo
             {
                 PersonaId = psicopedagogoId,
-                CorreoElectronico = request.CorreoElectronico,
-                Contrasenia = request.Contrasenia,
-                Avatar = request.Avatar
+                Avatar = request.Avatar,
+
+                Usuario = new Usuario
+                {
+                    CorreoElectronico = request.CorreoElectronico,
+                    Contrasenia = contraseniaHasher.Hash(request.Contrasenia),
+                }
             };
 
             await repository.UpdateAsync(psicopedagogo, ct);

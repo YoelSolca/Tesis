@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Backend.Application.DTO;
 
-public record PsicopedagogoDto(int personaId, string CorreoElectronico, string Contrasenia, string? Avatar)
+public record PsicopedagogoDto(int PersonaId, string CorreoElectronico, string Contrasenia, string? Avatar)
 {
-    public static PsicopedagogoDto FromEntity(Psicopedagogo p) => new(p.PersonaId, p.CorreoElectronico,p.Contrasenia, p.Avatar);
+    public static PsicopedagogoDto FromEntity(Psicopedagogo p) => new(p.PersonaId, p.Usuario.CorreoElectronico,p.Usuario.Contrasenia, p.Avatar);
 }
 
 

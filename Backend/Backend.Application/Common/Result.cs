@@ -25,5 +25,7 @@
         public const string Unauthorized = "UNAUTHORIZED";
         public const string Forbidden = "FORBIDDEN";
         public const string Duplicate = "DUPLICATE_IDCARD";
+        public const string InvalidCredentials = "INVALID_CREDENTIALS";
+        public const string EmailTaken = "EMAIL_TAKEN";
     }
 }
