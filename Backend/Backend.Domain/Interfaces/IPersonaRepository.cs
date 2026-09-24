@@ -5,6 +5,7 @@ namespace Backend.Domain.Interfaces
     public interface IPersonaRepository
     {
         Task<IReadOnlyList<Persona?>> GetAllAsync(CancellationToken ct = default);
+
         Task<Persona?> GetByIdAsync(int id, CancellationToken ct = default);
 
         Task<bool> IdCardExistAsync(string idCard, int? excludedId = null, CancellationToken ct = default);

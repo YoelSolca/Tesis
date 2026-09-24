@@ -4,6 +4,7 @@ using Backend.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260924134027_Paciente")]
+    partial class Paciente
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,12 +35,7 @@ namespace Backend.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("PsicopedagogoId")
-                        .HasColumnType("int");
-
                     b.HasKey("PersonaId");
-
-                    b.HasIndex("PsicopedagogoId");
 
                     b.ToTable("Paciente", (string)null);
                 });
@@ -128,15 +126,7 @@ namespace Backend.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.Domain.Entities.Psicopedagogo", "Psicopedagogo")
-                        .WithMany("Pacientes")
-                        .HasForeignKey("PsicopedagogoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Persona");
-
-                    b.Navigation("Psicopedagogo");
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Psicopedagogo", b =>
@@ -157,11 +147,6 @@ namespace Backend.Infrastructure.Migrations
 
                     b.Navigation("Psicopedagogo")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Backend.Domain.Entities.Psicopedagogo", b =>
-                {
-                    b.Navigation("Pacientes");
                 });
 #pragma warning restore 612, 618
         }

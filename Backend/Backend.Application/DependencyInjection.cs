@@ -11,6 +11,7 @@ namespace Backend.Application
         {
             services.AddScoped<IPersonaService, PersonaService>();
             services.AddScoped<IPsicopedagogoService, PsicopedagogoService>();
+            services.AddScoped<IPacienteService, PacienteService>();
 
             return services;
         }

@@ -11,12 +11,12 @@ namespace Backend.Application.Services
         IPersonaRepository repository,
         ILogger<PersonaService> logger) : IPersonaService
     {
-        async Task<IReadOnlyList<PersonaDto>> IPersonaService.GetAllAsync(CancellationToken ct)
+        public async Task<IReadOnlyList<PersonaDto>> GetAllAsync(CancellationToken ct = default)
         {
             var personas = await repository.GetAllAsync(ct);
 
             return personas.Select(PersonaDto.FromEntity).ToList();
-        }
+      }
 
         public async Task<Result<PersonaDto>> GetByIdAsync(int id, CancellationToken ct = default)
         {
@@ -84,7 +84,6 @@ namespace Backend.Application.Services
             logger.LogInformation("Persona eliminada: {Id} ({documento})", persona.Id, persona.Documento);
             return Result<bool>.Success(true);
         }
-
 
     }
 }

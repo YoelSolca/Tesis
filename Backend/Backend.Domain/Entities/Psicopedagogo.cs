@@ -10,5 +10,7 @@
         public DateTime FechaExpiracionTokenRestablecimiento { get; set; }
         public DateTime FechaRecuperacion { get; set; }
         public DateTime FechaCreacion { get; set; }
+
+        public ICollection<Paciente> Pacientes { get; set; } = new List<Paciente>();
     }
 }
