@@ -15,7 +15,6 @@
         public string Genero { get; set; } = string.Empty;
 
         public DateOnly FechaNacimiento { get; set; }
-
         public Psicopedagogo Psicopedagogo { get; set; } = null!;
         public Paciente Paciente { get; set; } = null!;
 

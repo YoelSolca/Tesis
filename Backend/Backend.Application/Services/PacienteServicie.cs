@@ -48,6 +48,7 @@ namespace Backend.Application.Services
             var paciente = new Paciente
             {
                 Direccion = request.Direccion,
+                FechaAlta = DateTime.Now,
                 Persona = new Persona
                 {
                     Nombre = request.Nombre,

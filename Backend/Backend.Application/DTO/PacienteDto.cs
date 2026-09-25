@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Application.DTO;
 
-public record PacienteDto(int personaId, string Direccion)
+public record PacienteDto(int personaId, string Direccion, DateTime FechaAlta)
 {
-    public static PacienteDto FromEntity(Paciente p) => new(p.PersonaId, p.Direccion);
+    public static PacienteDto FromEntity(Paciente p) => new(p.PersonaId, p.Direccion, p.FechaAlta);
 }
 
 
@@ -18,7 +18,8 @@ public record CreatePacienteRequest(
     [StringLength(20)] string Telefono,
     [StringLength(20)] string Documento,
     [StringLength(1)] string Genero,
-    DateOnly FechaNacimiento
+    DateOnly FechaNacimiento,
+    DateTime FechaAlta
 );
 
 public record UpsertPacienteRequest(

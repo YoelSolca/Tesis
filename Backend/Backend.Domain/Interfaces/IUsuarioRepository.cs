@@ -10,5 +10,7 @@ namespace Backend.Domain.Interfaces
 
         Task ValidatePasswordResetTokenAsync(string token, string nuevaContrasenia, CancellationToken ct = default);
 
+        Task sendEmail(string correoElectronico, CancellationToken ct = default);
+
     }
 }

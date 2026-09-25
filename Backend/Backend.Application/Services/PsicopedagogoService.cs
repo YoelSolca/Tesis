@@ -4,11 +4,6 @@ using Backend.Application.Interfaces;
 using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Backend.Application.Services
 {
@@ -36,6 +31,7 @@ namespace Backend.Application.Services
                 {
                     CorreoElectronico = request.CorreoElectronico,
                     Contrasenia = contraseniaHasher.Hash(request.Contrasenia),
+                    FechaAlta = DateTime.Now,
                 }
             };
 
@@ -70,7 +66,7 @@ namespace Backend.Application.Services
                 Usuario = new Usuario
                 {
                     CorreoElectronico = request.CorreoElectronico,
-                    Contrasenia = contraseniaHasher.Hash(request.Contrasenia),
+                    Contrasenia = contraseniaHasher.Hash(request.Contrasenia)
                 }
             };
 

@@ -39,6 +39,8 @@ namespace Backend.Application.Services
 
             await usuarioRepository.UpdateUsuariopAsync(existing.PsicopedagogoId, token, expiresAt, ct);
 
+            await usuarioRepository.sendEmail(correoElectronico, ct);
+
             logger.LogInformation("Contraseña restablecida para el usuario {PsicopedagogoId}", existing.PsicopedagogoId);
 
             return Result<ForgotPasswordRequest>.Success(new ForgotPasswordRequest(token, expiresAt));

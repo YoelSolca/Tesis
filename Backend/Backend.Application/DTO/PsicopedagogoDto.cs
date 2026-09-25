@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Backend.Application.DTO;
 
-public record PsicopedagogoDto(int PersonaId, string CorreoElectronico, string Contrasenia, string? Avatar)
+public record PsicopedagogoDto(int PersonaId, string CorreoElectronico, string Contrasenia, string? Avatar, DateTime FechaAlta)
 {
-    public static PsicopedagogoDto FromEntity(Psicopedagogo p) => new(p.PersonaId, p.Usuario.CorreoElectronico,p.Usuario.Contrasenia, p.Avatar);
+    public static PsicopedagogoDto FromEntity(Psicopedagogo p) => new(p.PersonaId, p.Usuario.CorreoElectronico,p.Usuario.Contrasenia, p.Avatar, p.Usuario.FechaAlta);
 }
 
 
@@ -23,7 +23,8 @@ public record CreatePsicopedagogoRequest(
     [StringLength(20)] string Telefono,
     [StringLength(20)] string Documento,
     [StringLength(1)] string Genero,
-    DateOnly FechaNacimiento
+    DateOnly FechaNacimiento,
+    DateTime FechaAlta
 );
 
 public record UpsertPsicopedagogoRequest(
