@@ -14,6 +14,7 @@ namespace Backend.Application
             services.AddScoped<IPsicopedagogoService, PsicopedagogoService>();
             services.AddScoped<IPacienteService, PacienteService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IEjercicioService, EjercicioService>();
             services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
 
             return services;

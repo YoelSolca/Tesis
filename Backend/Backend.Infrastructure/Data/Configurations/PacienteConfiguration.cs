@@ -21,8 +21,6 @@ namespace Backend.Infrastructure.Data.Configurations
                     .WithMany(a => a.Pacientes)
                     .HasForeignKey(b => b.PsicopedagogoId)
                     .OnDelete(DeleteBehavior.Restrict);
-
-
         }
     }
 }

@@ -25,6 +25,8 @@ namespace Backend.Infrastructure
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
             services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
+            services.AddScoped<IEjercicioRepository, EjercicioRepository>();
+
             return services;
         }
     }

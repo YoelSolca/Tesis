@@ -10,6 +10,8 @@ namespace Backend.Infrastructure.Data
         public DbSet<Psicopedagogo> Psicopedagogo => Set<Psicopedagogo>();
         public DbSet<Paciente> Paciente => Set<Paciente>();
         public DbSet<Usuario> Usuario => Set<Usuario>();
+        public DbSet<Ejercicio> Ejercicio => Set<Ejercicio>();
+        public DbSet<TipoEjercicio> TipoEjercicio => Set<TipoEjercicio>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
