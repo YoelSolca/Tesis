@@ -1,12 +1,14 @@
 ﻿using Backend.Application.Common;
 using Backend.Application.DTO;
 using Backend.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Api.Controllers
 {
     [ApiController]
     [Route("api/pacientes")]
+    [AllowAnonymous]
     public class PacienteController(IPacienteService pacienteService) : Controller
     {
         [HttpGet]

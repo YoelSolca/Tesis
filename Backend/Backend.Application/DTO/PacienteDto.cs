@@ -19,11 +19,22 @@ public record CreatePacienteRequest(
     [StringLength(20)] string Documento,
     [StringLength(1)] string Genero,
     DateOnly FechaNacimiento,
-    DateTime FechaAlta
+    DateTime FechaAlta,
+    [StringLength(50)] string? Objetivo,
+    [StringLength(100)] string? Observaciones
 );
 
 public record UpsertPacienteRequest(
-    [Required, StringLength(50)] string Direccion
+    [Required, StringLength(50)] string Direccion,
+    [Required, StringLength(100)] string Nombre,
+    [StringLength(100)] string Apellido,
+    [StringLength(20)] string Telefono,
+    [StringLength(20)] string Documento,
+    [StringLength(1)] string Genero,
+    DateOnly FechaNacimiento,
+    DateTime FechaAlta,
+    [StringLength(50)] string? Objetivo,
+    [StringLength(100)] string? Observaciones
     );
 
 

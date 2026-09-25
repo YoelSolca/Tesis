@@ -12,6 +12,7 @@ namespace Backend.Infrastructure.Data
         public DbSet<Usuario> Usuario => Set<Usuario>();
         public DbSet<Ejercicio> Ejercicio => Set<Ejercicio>();
         public DbSet<TipoEjercicio> TipoEjercicio => Set<TipoEjercicio>();
+        public DbSet<Intervencion> Intervencion => Set<Intervencion>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

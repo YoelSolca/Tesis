@@ -6,7 +6,9 @@
         public Persona Persona { get; set; } = null!;
         public string Direccion { get; set; } = string.Empty;
         public int PsicopedagogoId { get; set; }
+        public int IntervencionId { get; set; }
         public Psicopedagogo Psicopedagogo { get; set; } = null!;
+        public Intervencion Intervencion { get; set; } = null!;
         public DateTime FechaAlta { get; set; }
     }
 }

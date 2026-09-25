@@ -58,6 +58,13 @@ namespace Backend.Application.Services
                     Genero = request.Genero,
                     FechaNacimiento = request.FechaNacimiento
                 },
+
+                Intervencion = new Intervencion
+                {
+                    objetivo = request.Objetivo,
+                    observaciones = request.Observaciones
+                },
+
                 PsicopedagogoId = request.PsicopedagogoId
             };
 
@@ -80,15 +87,21 @@ namespace Backend.Application.Services
             {
                 PersonaId = pacienteId,
                 Direccion = request.Direccion,
-                //Persona = new Persona
-                //{
-                //    Nombre = request. Nombre,
-                //    Apellido = request.Apellido,
-                //    Telefono = request.Telefono,
-                //    Documento = request.Documento,
-                //    Genero = request.Genero,
-                //    FechaNacimiento = request.FechaNacimiento
-                //}
+                Persona = new Persona
+                {
+                    Nombre = request.Nombre,
+                    Apellido = request.Apellido,
+                    Telefono = request.Telefono,
+                    Documento = request.Documento,
+                    Genero = request.Genero,
+                    FechaNacimiento = request.FechaNacimiento
+                },
+                Intervencion = new Intervencion
+                {
+                    objetivo = request.Objetivo,
+                    observaciones = request.Observaciones
+                },
+
             };
 
             await repository.UpdateAsync(paciente, ct);
