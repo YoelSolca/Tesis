@@ -10,5 +10,7 @@ namespace Backend.Domain.Entities
         public PsicopedagogoPaciente PsicopedagogoPaciente { get; set; } = null!;
 
         public DateTime Fecha { get; set; }
+
+        public ICollection<SesionEjercicio> SesionEjercicios { get; set; } = new List<SesionEjercicio>();
     }
 }

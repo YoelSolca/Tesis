@@ -11,6 +11,6 @@ namespace Backend.Application.Interfaces
 
         Task<Result<SesionDto>> AddAsync(CreateSesionRequest sesion, CancellationToken ct = default);
 
-        Task<Result<SesionDto>> UpdateAsync(UpsertSesionRequest sesion, CancellationToken ct = default);
+        Task<Result<SesionDto>> UpdateAsync(int id, int psicopedagogoId, UpsertSesionRequest sesion, CancellationToken ct = default);
     }
 }

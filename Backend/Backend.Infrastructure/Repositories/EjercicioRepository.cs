@@ -19,5 +19,8 @@ namespace Backend.Infrastructure.Repositories
 
             return ejercicios;
         }
+
+        public async Task<IReadOnlyList<int>> GetExistingIdsAsync(IEnumerable<int> ids, CancellationToken ct = default)
+            => await context.Ejercicio.Where(e => ids.Contains(e.Id)).Select(e => e.Id).ToListAsync(ct);
     }
 }

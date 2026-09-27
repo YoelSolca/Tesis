@@ -49,9 +49,9 @@ namespace Backend.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> Update(int id, UpsertSesionRequest request)
+        public async Task<IActionResult> Update(int id, [FromQuery] int psicopedagogoId, UpsertSesionRequest request)
         {
-            var result = await sesionService.UpdateAsync(request);
+            var result = await sesionService.UpdateAsync(id, psicopedagogoId, request);
 
             return result.IsSuccess 
                 ? Ok(result) 

@@ -1,15 +1,11 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Backend.Infrastructure.Migrations
 {
-    /// <summary>
-    /// Mueve la intervención y las sesiones del paciente al vínculo psicopedagogo-paciente (historial privado)
-    /// y agrega FechaInicio/FechaFin al vínculo. Los datos existentes se conservan: cada paciente tenía un solo
-    /// psicopedagogo antes de esta migración, así que su intervención y sus sesiones pasan a ese vínculo.
-    /// </summary>
+    /// <inheritdoc />
     public partial class HistorialPrivadoPorPsicopedagogo : Migration
     {
         /// <inheritdoc />
@@ -22,6 +18,13 @@ namespace Backend.Infrastructure.Migrations
             migrationBuilder.DropIndex(
                 name: "IX_Sesion_PacienteId",
                 table: "Sesion");
+
+            migrationBuilder.AddColumn<int>(
+                name: "PsicopedagogoId",
+                table: "Sesion",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "FechaFin",
@@ -43,23 +46,78 @@ namespace Backend.Infrastructure.Migrations
                 nullable: false,
                 defaultValue: 0);
 
-            migrationBuilder.AddColumn<int>(
-                name: "PsicopedagogoId",
-                table: "Sesion",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
-            // La intervención del paciente pasa a su vínculo, y la atención arranca cuando se dio de alta.
+            // Conserva los datos existentes. FechaInicio arranca en la fecha de alta del paciente para
+            // todos los vínculos. La intervención del paciente pasa al vínculo más antiguo (menor
+            // PsicopedagogoId); si el paciente tenía más de un psicopedagogo, los demás vínculos arrancan
+            // con una intervención propia en blanco, porque el historial ahora es privado de cada uno.
             migrationBuilder.Sql(
-                "UPDATE pp SET pp.IntervencionId = p.IntervencionId, pp.FechaInicio = p.FechaAlta " +
+                "UPDATE pp SET pp.FechaInicio = p.FechaAlta " +
                 "FROM PsicopedagogoPaciente pp INNER JOIN Paciente p ON p.PersonaId = pp.PacienteId");
 
-            // Las sesiones pasan al (único) psicopedagogo que tenía el paciente.
+            migrationBuilder.Sql(@"
+                ;WITH Ganador AS (
+                    SELECT PacienteId, PsicopedagogoId,
+                           ROW_NUMBER() OVER (PARTITION BY PacienteId ORDER BY PsicopedagogoId) AS rn
+                    FROM PsicopedagogoPaciente
+                )
+                UPDATE pp SET pp.IntervencionId = p.IntervencionId
+                FROM PsicopedagogoPaciente pp
+                INNER JOIN Ganador g ON g.PacienteId = pp.PacienteId AND g.PsicopedagogoId = pp.PsicopedagogoId AND g.rn = 1
+                INNER JOIN Paciente p ON p.PersonaId = pp.PacienteId;
+
+                DECLARE @PacienteId int, @PsicopedagogoId int, @NuevaIntervencionId int;
+                DECLARE perdedores CURSOR LOCAL FAST_FORWARD FOR
+                    SELECT pp.PacienteId, pp.PsicopedagogoId
+                    FROM PsicopedagogoPaciente pp
+                    WHERE EXISTS (
+                        SELECT 1 FROM PsicopedagogoPaciente otro
+                        WHERE otro.PacienteId = pp.PacienteId AND otro.PsicopedagogoId < pp.PsicopedagogoId
+                    );
+
+                OPEN perdedores;
+                FETCH NEXT FROM perdedores INTO @PacienteId, @PsicopedagogoId;
+                WHILE @@FETCH_STATUS = 0
+                BEGIN
+                    INSERT INTO Intervencion (objetivo, observaciones) VALUES (NULL, NULL);
+                    SET @NuevaIntervencionId = SCOPE_IDENTITY();
+
+                    UPDATE PsicopedagogoPaciente SET IntervencionId = @NuevaIntervencionId
+                    WHERE PacienteId = @PacienteId AND PsicopedagogoId = @PsicopedagogoId;
+
+                    FETCH NEXT FROM perdedores INTO @PacienteId, @PsicopedagogoId;
+                END
+                CLOSE perdedores;
+                DEALLOCATE perdedores;");
+
+            // Las sesiones quedan del psicopedagogo con el vínculo más antiguo para ese paciente.
             migrationBuilder.Sql(
                 "UPDATE s SET s.PsicopedagogoId = " +
-                "(SELECT TOP 1 pp.PsicopedagogoId FROM PsicopedagogoPaciente pp WHERE pp.PacienteId = s.PacienteId ORDER BY pp.FechaInicio) " +
+                "(SELECT TOP 1 pp.PsicopedagogoId FROM PsicopedagogoPaciente pp WHERE pp.PacienteId = s.PacienteId ORDER BY pp.PsicopedagogoId) " +
                 "FROM Sesion s");
+
+            migrationBuilder.CreateTable(
+                name: "SesionEjercicio",
+                columns: table => new
+                {
+                    SesionId = table.Column<int>(type: "int", nullable: false),
+                    EjercicioId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SesionEjercicio", x => new { x.SesionId, x.EjercicioId });
+                    table.ForeignKey(
+                        name: "FK_SesionEjercicio_Ejercicio_EjercicioId",
+                        column: x => x.EjercicioId,
+                        principalTable: "Ejercicio",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SesionEjercicio_Sesion_SesionId",
+                        column: x => x.SesionId,
+                        principalTable: "Sesion",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sesion_PsicopedagogoId_PacienteId",
@@ -71,6 +129,11 @@ namespace Backend.Infrastructure.Migrations
                 table: "PsicopedagogoPaciente",
                 column: "IntervencionId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SesionEjercicio_EjercicioId",
+                table: "SesionEjercicio",
+                column: "EjercicioId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_PsicopedagogoPaciente_Intervencion_IntervencionId",
@@ -124,6 +187,9 @@ namespace Backend.Infrastructure.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_Sesion_PsicopedagogoPaciente_PsicopedagogoId_PacienteId",
                 table: "Sesion");
+
+            migrationBuilder.DropTable(
+                name: "SesionEjercicio");
 
             migrationBuilder.DropIndex(
                 name: "IX_Sesion_PsicopedagogoId_PacienteId",

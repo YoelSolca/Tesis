@@ -12,6 +12,10 @@ namespace Backend.Domain.Interfaces
 
         Task<Sesion?> AddAsync(Sesion sesion, CancellationToken ct = default);
 
-        Task UpdateAsync(Sesion sesion, CancellationToken ct = default);
+        /// <summary>
+        /// Suma ejercicios (los que aún no estuvieran) a una sesión existente del psicopedagogo indicado.
+        /// Null si la sesión no existe o no es suya.
+        /// </summary>
+        Task<Sesion?> AgregarEjerciciosAsync(int sesionId, int psicopedagogoId, IEnumerable<int> ejercicioIds, CancellationToken ct = default);
     }
 }

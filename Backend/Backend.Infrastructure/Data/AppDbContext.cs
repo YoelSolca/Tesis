@@ -14,6 +14,9 @@ namespace Backend.Infrastructure.Data
         public DbSet<TipoEjercicio> TipoEjercicio => Set<TipoEjercicio>();
         public DbSet<Intervencion> Intervencion => Set<Intervencion>();
         public DbSet<Sesion> Sesion => Set<Sesion>();
+        public DbSet<Resultado> Resultado => Set<Resultado>();
+        public DbSet<Metrica> Metrica => Set<Metrica>();
+        public DbSet<ResultadoMetrica> ResultadoMetrica => Set<ResultadoMetrica>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

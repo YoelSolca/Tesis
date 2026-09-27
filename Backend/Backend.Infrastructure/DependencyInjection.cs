@@ -27,6 +27,8 @@ namespace Backend.Infrastructure
             services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
             services.AddScoped<IEjercicioRepository, EjercicioRepository>();
             services.AddScoped<ISesionRepository, SesionRepository>();
+            services.AddScoped<IMetricaRepository, MetricaRepository>();
+            services.AddScoped<IResultadoRepository, ResultadoRepository>();
 
             return services;
         }

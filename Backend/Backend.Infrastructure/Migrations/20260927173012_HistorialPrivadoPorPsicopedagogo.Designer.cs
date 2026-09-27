@@ -4,6 +4,7 @@ using Backend.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260927173012_HistorialPrivadoPorPsicopedagogo")]
+    partial class HistorialPrivadoPorPsicopedagogo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,40 +67,6 @@ namespace Backend.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Intervencion", (string)null);
-                });
-
-            modelBuilder.Entity("Backend.Domain.Entities.Metrica", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Descripcion")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("TipoAgregacion")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Unidad")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Nombre")
-                        .IsUnique();
-
-                    b.ToTable("Metrica", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Paciente", b =>
@@ -202,57 +171,6 @@ namespace Backend.Infrastructure.Migrations
                     b.HasIndex("PacienteId");
 
                     b.ToTable("PsicopedagogoPaciente", (string)null);
-                });
-
-            modelBuilder.Entity("Backend.Domain.Entities.Resultado", b =>
-                {
-                    b.Property<int>("SesionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EjercicioId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Aciertos")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Errores")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaRegistro")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Observaciones")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int?>("TiempoSegundos")
-                        .HasColumnType("int");
-
-                    b.HasKey("SesionId", "EjercicioId");
-
-                    b.ToTable("Resultado", (string)null);
-                });
-
-            modelBuilder.Entity("Backend.Domain.Entities.ResultadoMetrica", b =>
-                {
-                    b.Property<int>("SesionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EjercicioId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MetricaId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Valor")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
-
-                    b.HasKey("SesionId", "EjercicioId", "MetricaId");
-
-                    b.HasIndex("MetricaId");
-
-                    b.ToTable("ResultadoMetrica", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Sesion", b =>
@@ -407,36 +325,6 @@ namespace Backend.Infrastructure.Migrations
                     b.Navigation("Psicopedagogo");
                 });
 
-            modelBuilder.Entity("Backend.Domain.Entities.Resultado", b =>
-                {
-                    b.HasOne("Backend.Domain.Entities.SesionEjercicio", "SesionEjercicio")
-                        .WithOne("Resultado")
-                        .HasForeignKey("Backend.Domain.Entities.Resultado", "SesionId", "EjercicioId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("SesionEjercicio");
-                });
-
-            modelBuilder.Entity("Backend.Domain.Entities.ResultadoMetrica", b =>
-                {
-                    b.HasOne("Backend.Domain.Entities.Metrica", "Metrica")
-                        .WithMany("ResultadoMetricas")
-                        .HasForeignKey("MetricaId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Domain.Entities.Resultado", "Resultado")
-                        .WithMany("ResultadoMetricas")
-                        .HasForeignKey("SesionId", "EjercicioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Metrica");
-
-                    b.Navigation("Resultado");
-                });
-
             modelBuilder.Entity("Backend.Domain.Entities.Sesion", b =>
                 {
                     b.HasOne("Backend.Domain.Entities.PsicopedagogoPaciente", "PsicopedagogoPaciente")
@@ -488,11 +376,6 @@ namespace Backend.Infrastructure.Migrations
                     b.Navigation("PsicopedagogoPaciente");
                 });
 
-            modelBuilder.Entity("Backend.Domain.Entities.Metrica", b =>
-                {
-                    b.Navigation("ResultadoMetricas");
-                });
-
             modelBuilder.Entity("Backend.Domain.Entities.Paciente", b =>
                 {
                     b.Navigation("PsicopedagogoPacientes");
@@ -520,19 +403,9 @@ namespace Backend.Infrastructure.Migrations
                     b.Navigation("Sesiones");
                 });
 
-            modelBuilder.Entity("Backend.Domain.Entities.Resultado", b =>
-                {
-                    b.Navigation("ResultadoMetricas");
-                });
-
             modelBuilder.Entity("Backend.Domain.Entities.Sesion", b =>
                 {
                     b.Navigation("SesionEjercicios");
-                });
-
-            modelBuilder.Entity("Backend.Domain.Entities.SesionEjercicio", b =>
-                {
-                    b.Navigation("Resultado");
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.TipoEjercicio", b =>
