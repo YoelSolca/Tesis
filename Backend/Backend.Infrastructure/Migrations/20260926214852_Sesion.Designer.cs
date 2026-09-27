@@ -4,6 +4,7 @@ using Backend.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260926214852_Sesion")]
+    partial class Sesion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,7 +82,17 @@ namespace Backend.Infrastructure.Migrations
                     b.Property<DateTime>("FechaAlta")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("IntervencionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PsicopedagogoId")
+                        .HasColumnType("int");
+
                     b.HasKey("PersonaId");
+
+                    b.HasIndex("IntervencionId");
+
+                    b.HasIndex("PsicopedagogoId");
 
                     b.ToTable("Paciente", (string)null);
                 });
@@ -143,33 +156,6 @@ namespace Backend.Infrastructure.Migrations
                     b.ToTable("Psicopedagogo", (string)null);
                 });
 
-            modelBuilder.Entity("Backend.Domain.Entities.PsicopedagogoPaciente", b =>
-                {
-                    b.Property<int>("PsicopedagogoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PacienteId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("FechaFin")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("FechaInicio")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("IntervencionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PsicopedagogoId", "PacienteId");
-
-                    b.HasIndex("IntervencionId")
-                        .IsUnique();
-
-                    b.HasIndex("PacienteId");
-
-                    b.ToTable("PsicopedagogoPaciente", (string)null);
-                });
-
             modelBuilder.Entity("Backend.Domain.Entities.Sesion", b =>
                 {
                     b.Property<int>("Id")
@@ -184,12 +170,9 @@ namespace Backend.Infrastructure.Migrations
                     b.Property<int>("PacienteId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PsicopedagogoId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("PsicopedagogoId", "PacienteId");
+                    b.HasIndex("PacienteId");
 
                     b.ToTable("Sesion", (string)null);
                 });
@@ -260,13 +243,29 @@ namespace Backend.Infrastructure.Migrations
 
             modelBuilder.Entity("Backend.Domain.Entities.Paciente", b =>
                 {
+                    b.HasOne("Backend.Domain.Entities.Intervencion", "Intervencion")
+                        .WithMany("Pacientes")
+                        .HasForeignKey("IntervencionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Backend.Domain.Entities.Persona", "Persona")
                         .WithOne("Paciente")
                         .HasForeignKey("Backend.Domain.Entities.Paciente", "PersonaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Backend.Domain.Entities.Psicopedagogo", "Psicopedagogo")
+                        .WithMany("Pacientes")
+                        .HasForeignKey("PsicopedagogoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Intervencion");
+
                     b.Navigation("Persona");
+
+                    b.Navigation("Psicopedagogo");
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Psicopedagogo", b =>
@@ -280,42 +279,15 @@ namespace Backend.Infrastructure.Migrations
                     b.Navigation("Persona");
                 });
 
-            modelBuilder.Entity("Backend.Domain.Entities.PsicopedagogoPaciente", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Sesion", b =>
                 {
-                    b.HasOne("Backend.Domain.Entities.Intervencion", "Intervencion")
-                        .WithOne("PsicopedagogoPaciente")
-                        .HasForeignKey("Backend.Domain.Entities.PsicopedagogoPaciente", "IntervencionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Backend.Domain.Entities.Paciente", "Paciente")
-                        .WithMany("PsicopedagogoPacientes")
+                        .WithMany("Sesiones")
                         .HasForeignKey("PacienteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.Domain.Entities.Psicopedagogo", "Psicopedagogo")
-                        .WithMany("PsicopedagogoPacientes")
-                        .HasForeignKey("PsicopedagogoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Intervencion");
-
                     b.Navigation("Paciente");
-
-                    b.Navigation("Psicopedagogo");
-                });
-
-            modelBuilder.Entity("Backend.Domain.Entities.Sesion", b =>
-                {
-                    b.HasOne("Backend.Domain.Entities.PsicopedagogoPaciente", "PsicopedagogoPaciente")
-                        .WithMany("Sesiones")
-                        .HasForeignKey("PsicopedagogoId", "PacienteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("PsicopedagogoPaciente");
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Usuario", b =>
@@ -331,12 +303,12 @@ namespace Backend.Infrastructure.Migrations
 
             modelBuilder.Entity("Backend.Domain.Entities.Intervencion", b =>
                 {
-                    b.Navigation("PsicopedagogoPaciente");
+                    b.Navigation("Pacientes");
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Paciente", b =>
                 {
-                    b.Navigation("PsicopedagogoPacientes");
+                    b.Navigation("Sesiones");
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Persona", b =>
@@ -350,15 +322,10 @@ namespace Backend.Infrastructure.Migrations
 
             modelBuilder.Entity("Backend.Domain.Entities.Psicopedagogo", b =>
                 {
-                    b.Navigation("PsicopedagogoPacientes");
+                    b.Navigation("Pacientes");
 
                     b.Navigation("Usuario")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Backend.Domain.Entities.PsicopedagogoPaciente", b =>
-                {
-                    b.Navigation("Sesiones");
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.TipoEjercicio", b =>

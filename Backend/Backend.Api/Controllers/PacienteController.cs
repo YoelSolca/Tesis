@@ -13,8 +13,8 @@ namespace Backend.Api.Controllers
     {
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAll(CancellationToken ct)
-            => Ok(await pacienteService.GetAllPacienteAsync(ct));
+        public async Task<IActionResult> GetAll(int idPsicopedagogo, CancellationToken ct)
+            => Ok(await pacienteService.GetAllPacienteAsync(idPsicopedagogo, ct));
 
 
         [HttpGet("{pacienteId:int}")]
@@ -26,15 +26,27 @@ namespace Backend.Api.Controllers
             return result.IsSuccess ? Ok(result.Value) : ToError(result.Error, result.ErrorCode);
         }
 
+        /// <summary>
+        /// Registra un paciente. Si el documento ya existe no se duplica: se vincula al psicopedagogo con el
+        /// paciente existente (200) y empieza su propio historial desde cero. Si es nuevo, responde 201.
+        /// Si el psicopedagogo ya atiende a ese paciente, responde 409 (el documento ya está en su lista).
+        /// </summary>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Create(CreatePacienteRequest request, CancellationToken ct)
         {
             var result = await pacienteService.CreatePacienteAsync(request, ct);
-            return result.IsSuccess
-                ? CreatedAtAction(nameof(GetById), new { pacienteId = result.Value!.personaId }, result.Value)
-                : ToError(result.Error, result.ErrorCode);
+
+            if (!result.IsSuccess)
+                return ToError(result.Error, result.ErrorCode);
+
+            var registro = result.Value!;
+            return registro.Creado
+                ? CreatedAtAction(nameof(GetById), new { pacienteId = registro.Paciente.personaId }, registro.Paciente)
+                : Ok(registro.Paciente);
         }
 
         [HttpPut("{pacienteId:int}")]
@@ -47,6 +59,34 @@ namespace Backend.Api.Controllers
             return result.IsSuccess
                 ? Ok(result.Value)
                 : ToError(result.Error, result.ErrorCode);
+        }
+
+        [HttpGet("{pacienteId:int}/psicopedagogos/{psicopedagogoId:int}/intervencion")]
+        [ProducesResponseType<IntervencionDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetIntervencion(int pacienteId, int psicopedagogoId, CancellationToken ct)
+        {
+            var result = await pacienteService.GetIntervencionAsync(pacienteId, psicopedagogoId, ct);
+            return result.IsSuccess ? Ok(result.Value) : ToError(result.Error, result.ErrorCode);
+        }
+
+        [HttpPut("{pacienteId:int}/psicopedagogos/{psicopedagogoId:int}/intervencion")]
+        [ProducesResponseType<IntervencionDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateIntervencion(int pacienteId, int psicopedagogoId, UpsertIntervencionRequest request, CancellationToken ct)
+        {
+            var result = await pacienteService.UpdateIntervencionAsync(pacienteId, psicopedagogoId, request, ct);
+            return result.IsSuccess ? Ok(result.Value) : ToError(result.Error, result.ErrorCode);
+        }
+
+        /// <summary>Finaliza la atención del psicopedagogo con el paciente. El historial se conserva.</summary>
+        [HttpDelete("{pacienteId:int}/psicopedagogos/{psicopedagogoId:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DesasignarPsicopedagogo(int pacienteId, int psicopedagogoId, CancellationToken ct)
+        {
+            var result = await pacienteService.DesasignarPsicopedagogoAsync(pacienteId, psicopedagogoId, ct);
+            return result.IsSuccess ? NoContent() : ToError(result.Error, result.ErrorCode);
         }
 
         private ObjectResult ToError(string? error, string? code)

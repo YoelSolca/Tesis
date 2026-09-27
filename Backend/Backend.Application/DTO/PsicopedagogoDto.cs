@@ -13,7 +13,6 @@ public record PsicopedagogoDto(int PersonaId, string CorreoElectronico, string C
     public static PsicopedagogoDto FromEntity(Psicopedagogo p) => new(p.PersonaId, p.Usuario.CorreoElectronico,p.Usuario.Contrasenia, p.Avatar, p.Usuario.FechaAlta);
 }
 
-
 public record CreatePsicopedagogoRequest(
     [Required, StringLength(50)] string CorreoElectronico,
     [Required, StringLength(16)] string Contrasenia,

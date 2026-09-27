@@ -1,4 +1,4 @@
-﻿using Backend.Domain.Entities;
+using Backend.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,16 +16,6 @@ namespace Backend.Infrastructure.Data.Configurations
                    .WithOne(pa => pa.Paciente)
                    .HasForeignKey<Paciente>(p => p.PersonaId)
                    .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(b => b.Psicopedagogo)
-                    .WithMany(a => a.Pacientes)
-                    .HasForeignKey(b => b.PsicopedagogoId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(b => b.Intervencion)
-                    .WithMany(a => a.Pacientes)
-                    .HasForeignKey(b => b.IntervencionId)
-                    .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
