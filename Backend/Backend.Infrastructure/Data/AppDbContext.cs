@@ -17,6 +17,7 @@ namespace Backend.Infrastructure.Data
         public DbSet<Resultado> Resultado => Set<Resultado>();
         public DbSet<Metrica> Metrica => Set<Metrica>();
         public DbSet<ResultadoMetrica> ResultadoMetrica => Set<ResultadoMetrica>();
+        public DbSet<Informe> Informe => Set<Informe>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

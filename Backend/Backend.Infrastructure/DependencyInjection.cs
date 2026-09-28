@@ -29,6 +29,7 @@ namespace Backend.Infrastructure
             services.AddScoped<ISesionRepository, SesionRepository>();
             services.AddScoped<IMetricaRepository, MetricaRepository>();
             services.AddScoped<IResultadoRepository, ResultadoRepository>();
+            services.AddScoped<IInformeRepository, InformeRepository>();
 
             return services;
         }

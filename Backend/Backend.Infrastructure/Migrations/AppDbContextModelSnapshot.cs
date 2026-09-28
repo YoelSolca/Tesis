@@ -45,6 +45,42 @@ namespace Backend.Infrastructure.Migrations
                     b.ToTable("Ejercicio", (string)null);
                 });
 
+            modelBuilder.Entity("Backend.Domain.Entities.Informe", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Contenido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaGeneracion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PacienteId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PeriodoDesde")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PeriodoHasta")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PsicopedagogoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PacienteId");
+
+                    b.HasIndex("PsicopedagogoId");
+
+                    b.ToTable("Informe", (string)null);
+                });
+
             modelBuilder.Entity("Backend.Domain.Entities.Intervencion", b =>
                 {
                     b.Property<int>("Id")
@@ -356,6 +392,25 @@ namespace Backend.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("TipoEjercicio");
+                });
+
+            modelBuilder.Entity("Backend.Domain.Entities.Informe", b =>
+                {
+                    b.HasOne("Backend.Domain.Entities.Paciente", "Paciente")
+                        .WithMany()
+                        .HasForeignKey("PacienteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Domain.Entities.Psicopedagogo", "Psicopedagogo")
+                        .WithMany()
+                        .HasForeignKey("PsicopedagogoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Paciente");
+
+                    b.Navigation("Psicopedagogo");
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Paciente", b =>
