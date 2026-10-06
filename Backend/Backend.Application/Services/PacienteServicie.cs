@@ -16,13 +16,28 @@ namespace Backend.Application.Services
         IPacienteRepository repository,
         IPersonaRepository personaRepository,
         IPsicopedagogoRepository psicopedagogoRepository,
+        IUsuarioActual usuarioActual,
         ILogger<PacienteService> logger
         ) : IPacienteService
     {
-        public async Task<IReadOnlyList<PacienteDto>> GetAllPacienteAsync(int idPsicopedagogo, CancellationToken ct = default)
+        private const int MaxPageSize = 50;
+
+        public async Task<Result<PagedResponse<PacienteListItemDto>>> GetPacientesAsync(string? search, int page, int pageSize, CancellationToken ct = default)
         {
-            var pacientes = await repository.GetAllPacienteAsync(idPsicopedagogo, ct);
-           return pacientes.Select(PacienteDto.FromEntity).ToList();
+            if (usuarioActual.PsicopedagogoId is not int psicopedagogoId)
+            {
+                return Result<PagedResponse<PacienteListItemDto>>.Failure("No hay una sesión activa.", ErrorCodes.Unauthorized);
+            }
+
+            page = Math.Max(page, 1);
+            pageSize = Math.Clamp(pageSize, 1, MaxPageSize);
+
+            var resultado = await repository.GetPacientesAsync(psicopedagogoId, search, page, pageSize, ct);
+            var items = resultado.Items
+                .Select(p => new PacienteListItemDto(p.Id, p.Nombre, p.Apellido, p.Documento, p.FechaNacimiento))
+                .ToList();
+
+            return Result<PagedResponse<PacienteListItemDto>>.Success(new PagedResponse<PacienteListItemDto>(items, resultado.Total, page, pageSize));
         }
 
         public async Task<Result<PacienteDto>> GetByPacienteIdAsync(int pacienteId, CancellationToken ct = default)

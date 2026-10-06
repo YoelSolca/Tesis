@@ -9,6 +9,11 @@ public record PacienteDto(int personaId, string Direccion, DateTime FechaAlta)
     public static PacienteDto FromEntity(Paciente p) => new(p.PersonaId, p.Direccion, p.FechaAlta);
 }
 
+/// <summary>Fila de la lista de pacientes. El Front calcula edad e iniciales a partir de estos datos.</summary>
+public record PacienteListItemDto(int Id, string Nombre, string? Apellido, string? Documento, DateOnly FechaNacimiento);
+
+public record PagedResponse<T>(IReadOnlyList<T> Items, int Total, int Page, int PageSize);
+
 /// <summary>Creado = true si la persona se registró por primera vez; false si ya existía y solo se vinculó/reactivó la atención.</summary>
 public record RegistroPacienteResult(PacienteDto Paciente, bool Creado);
 

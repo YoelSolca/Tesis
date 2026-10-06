@@ -8,14 +8,17 @@ namespace Backend.Api.Controllers
 {
     [ApiController]
     [Route("api/pacientes")]
-    [AllowAnonymous]
     public class PacienteController(IPacienteService pacienteService) : Controller
     {
+        /// <summary>Lista paginada de los pacientes del psicopedagogo autenticado (id tomado del JWT).</summary>
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAll(int idPsicopedagogo, CancellationToken ct)
-            => Ok(await pacienteService.GetAllPacienteAsync(idPsicopedagogo, ct));
-
+        [ProducesResponseType<PagedResponse<PacienteListItemDto>>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetAll([FromQuery] string? search, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, CancellationToken ct = default)
+        {
+            var result = await pacienteService.GetPacientesAsync(search, page, pageSize, ct);
+            return result.IsSuccess ? Ok(result.Value) : ToError(result.Error, result.ErrorCode);
+        }
 
         [HttpGet("{pacienteId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -84,6 +87,7 @@ namespace Backend.Api.Controllers
             var status = code switch
             {
                 ErrorCodes.NotFound => StatusCodes.Status404NotFound,
+                ErrorCodes.Unauthorized => StatusCodes.Status401Unauthorized,
                 ErrorCodes.Duplicate => StatusCodes.Status409Conflict,
                 _ => StatusCodes.Status400BadRequest
             };

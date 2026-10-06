@@ -9,7 +9,9 @@ namespace Backend.Application.Interfaces
         Task<Result<RegistroPacienteResult>> CreatePacienteAsync(CreatePacienteRequest request, CancellationToken ct = default);
 
         Task<Result<PacienteDto>> GetByPacienteIdAsync(int pacienteId, CancellationToken ct = default);
-        Task<IReadOnlyList<PacienteDto>> GetAllPacienteAsync(int idPsicopedagogo, CancellationToken ct = default);
+
+        /// <summary>Lista paginada de los pacientes vigentes del psicopedagogo autenticado.</summary>
+        Task<Result<PagedResponse<PacienteListItemDto>>> GetPacientesAsync(string? search, int page, int pageSize, CancellationToken ct = default);
 
         Task<Result<PacienteDto>> UpdatePacienteAsync(int pacienteId, UpsertPacienteRequest request, CancellationToken ct = default);
 

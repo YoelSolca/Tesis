@@ -1,5 +1,7 @@
 using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
+using Backend.Domain.Common;
+using Backend.Domain.ReadModels;
 using Backend.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,16 +9,31 @@ namespace Backend.Infrastructure.Repositories
 {
     public class PacienteRepository(AppDbContext context) : IPacienteRepository
     {
-        public async Task<IReadOnlyList<Paciente?>> GetAllPacienteAsync(int idPsicopedagogo, CancellationToken ct = default)
+        public async Task<PagedResult<PacienteResumen>> GetPacientesAsync(int idPsicopedagogo, string? search, int page, int pageSize, CancellationToken ct = default)
         {
-            var query = context.Paciente.AsNoTracking();
+            var query = context.Paciente.AsNoTracking()
+                .Where(p => p.PsicopedagogoPacientes.Any(pp => pp.PsicopedagogoId == idPsicopedagogo && pp.FechaFin == null));
 
-            var pacientes = await
-                            query.OrderBy(p => p.Persona.Nombre)
-                            .ThenBy(p => p.PersonaId)
-                            .Where(p => p.PsicopedagogoPacientes.Any(pp => pp.PsicopedagogoId == idPsicopedagogo && pp.FechaFin == null))
-                            .ToListAsync(ct);
-            return pacientes;
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                query = query.Where(p => p.Persona.Nombre.Contains(term)
+                                      || p.Persona.Apellido.Contains(term)
+                                      || p.Persona.Documento.Contains(term));
+            }
+
+            var total = await query.CountAsync(ct);
+
+            var items = await query
+                .OrderBy(p => p.Persona.Apellido)
+                .ThenBy(p => p.Persona.Nombre)
+                .ThenBy(p => p.PersonaId)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => new PacienteResumen(p.PersonaId, p.Persona.Nombre, p.Persona.Apellido, p.Persona.Documento, p.Persona.FechaNacimiento))
+                .ToListAsync(ct);
+
+            return new PagedResult<PacienteResumen>(items, total);
         }
 
         public async Task<Paciente?> GetByPacienteIdAsync(int id, CancellationToken ct = default)

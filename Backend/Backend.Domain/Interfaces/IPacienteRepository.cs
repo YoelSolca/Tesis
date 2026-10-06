@@ -1,11 +1,13 @@
 using Backend.Domain.Entities;
+using Backend.Domain.Common;
+using Backend.Domain.ReadModels;
 
 namespace Backend.Domain.Interfaces
 {
     public interface IPacienteRepository
     {
-        /// <summary>Pacientes con atención vigente (sin FechaFin) del psicopedagogo indicado.</summary>
-        Task<IReadOnlyList<Paciente?>> GetAllPacienteAsync(int idPsicopedagogo, CancellationToken ct = default);
+        /// <summary>Pacientes con atención vigente (sin FechaFin) del psicopedagogo, filtrados por nombre/apellido/documento y paginados.</summary>
+        Task<PagedResult<PacienteResumen>> GetPacientesAsync(int idPsicopedagogo, string? search, int page, int pageSize, CancellationToken ct = default);
 
         Task<Paciente> AddPacienteAsync(Paciente paciente, CancellationToken ct = default);
 
