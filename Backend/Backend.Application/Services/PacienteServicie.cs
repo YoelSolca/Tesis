@@ -14,6 +14,7 @@ namespace Backend.Application.Services
 {
     public class PacienteService(
         IPacienteRepository repository,
+        IPacienteQueries queries,
         IPersonaRepository personaRepository,
         IPsicopedagogoRepository psicopedagogoRepository,
         IUsuarioActual usuarioActual,
@@ -32,32 +33,22 @@ namespace Backend.Application.Services
             page = Math.Max(page, 1);
             pageSize = Math.Clamp(pageSize, 1, MaxPageSize);
 
-            var resultado = await repository.GetPacientesAsync(psicopedagogoId, search, page, pageSize, ct);
-            var items = resultado.Items
-                .Select(p => new PacienteListItemDto(p.Id, p.Nombre, p.Apellido, p.Documento, p.FechaNacimiento))
-                .ToList();
-
-            return Result<PagedResponse<PacienteListItemDto>>.Success(new PagedResponse<PacienteListItemDto>(items, resultado.Total, page, pageSize));
+            return Result<PagedResponse<PacienteListItemDto>>.Success(
+                await queries.GetPacientesAsync(psicopedagogoId, search, page, pageSize, ct));
         }
 
         public async Task<Result<PacienteDetalleDto>> GetDetalleAsync(int pacienteId, CancellationToken ct = default)
         {
-            if (usuarioActual.PsicopedagogoId is not int psicopedagogoId) 
+            if (usuarioActual.PsicopedagogoId is not int psicopedagogoId)
+            {
                 return Result<PacienteDetalleDto>.Failure("No hay una sesión activa.", ErrorCodes.Unauthorized);
-          
+            }
 
-            var d = await repository.GetDetalleAsync(pacienteId, psicopedagogoId, ct);
+            var detalle = await queries.GetDetalleAsync(pacienteId, psicopedagogoId, ct);
 
-            if (d is null)
-                return Result<PacienteDetalleDto>.Failure($"El paciente con ID {pacienteId} no fue encontrado.", ErrorCodes.NotFound);
-
-            var ultima = d.UltimaSesion is null
-                ? null
-                : new UltimaSesionDto(d.UltimaSesion.Id, d.UltimaSesion.Fecha, d.UltimaSesion.TiposEjercicio);
-
-            return Result<PacienteDetalleDto>.Success(new PacienteDetalleDto(
-                d.Id, d.Nombre, d.Apellido, d.Documento, d.FechaNacimiento,
-                d.Telefono, d.Direccion, d.Genero, d.Objetivo, d.Observaciones, ultima));
+            return detalle is null
+                ? Result<PacienteDetalleDto>.Failure($"El paciente con ID {pacienteId} no fue encontrado.", ErrorCodes.NotFound)
+                : Result<PacienteDetalleDto>.Success(detalle);
         }
 
         public async Task<Result<RegistroPacienteResult>> CreatePacienteAsync(CreatePacienteRequest request, CancellationToken ct = default)

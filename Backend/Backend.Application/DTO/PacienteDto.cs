@@ -10,7 +10,7 @@ public record PacienteDto(int personaId, string Direccion, DateTime FechaAlta)
 }
 
 /// <summary>Fila de la lista de pacientes. El Front calcula edad e iniciales a partir de estos datos.</summary>
-public record PacienteListItemDto(int Id, string Nombre, string? Apellido, string? Documento, DateOnly FechaNacimiento);
+public record PacienteListItemDto(int Id, string Nombre, string Apellido, string Documento, DateOnly FechaNacimiento);
 
 /// <summary>Todo lo que necesita la pantalla Información del paciente, vista por el psicopedagogo autenticado.</summary>
 public record PacienteDetalleDto(
