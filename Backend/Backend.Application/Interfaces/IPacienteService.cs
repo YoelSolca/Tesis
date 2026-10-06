@@ -8,7 +8,7 @@ namespace Backend.Application.Interfaces
         /// <summary>Registra al paciente o, si el documento ya existe, solo vincula al psicopedagogo (sin duplicar).</summary>
         Task<Result<RegistroPacienteResult>> CreatePacienteAsync(CreatePacienteRequest request, CancellationToken ct = default);
 
-        Task<Result<PacienteDto>> GetByPacienteIdAsync(int pacienteId, CancellationToken ct = default);
+        Task<Result<PacienteDetalleDto>> GetDetalleAsync(int pacienteId, CancellationToken ct = default);
 
         /// <summary>Lista paginada de los pacientes vigentes del psicopedagogo autenticado.</summary>
         Task<Result<PagedResponse<PacienteListItemDto>>> GetPacientesAsync(string? search, int page, int pageSize, CancellationToken ct = default);

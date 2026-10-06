@@ -11,7 +11,8 @@ namespace Backend.Domain.Interfaces
 
         Task<Paciente> AddPacienteAsync(Paciente paciente, CancellationToken ct = default);
 
-        Task<Paciente?> GetByPacienteIdAsync(int id, CancellationToken ct = default);
+        /// <summary>Detalle del paciente visto por ese psicopedagogo, o null si no existe o nunca lo atendió.</summary>
+        Task<PacienteDetalle?> GetDetalleAsync(int pacienteId, int psicopedagogoId, CancellationToken ct = default);
 
         Task<Paciente?> GetByDocumentoAsync(string documento, CancellationToken ct = default);
 

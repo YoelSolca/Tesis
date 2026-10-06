@@ -40,12 +40,24 @@ namespace Backend.Application.Services
             return Result<PagedResponse<PacienteListItemDto>>.Success(new PagedResponse<PacienteListItemDto>(items, resultado.Total, page, pageSize));
         }
 
-        public async Task<Result<PacienteDto>> GetByPacienteIdAsync(int pacienteId, CancellationToken ct = default)
+        public async Task<Result<PacienteDetalleDto>> GetDetalleAsync(int pacienteId, CancellationToken ct = default)
         {
-            var paciente = await repository.GetByPacienteIdAsync(pacienteId, ct);
-            return paciente is null
-                ? Result<PacienteDto>.Failure($"El paciente con ID {pacienteId} no fue encontrado.", ErrorCodes.NotFound)
-                : Result<PacienteDto>.Success(PacienteDto.FromEntity(paciente));
+            if (usuarioActual.PsicopedagogoId is not int psicopedagogoId) 
+                return Result<PacienteDetalleDto>.Failure("No hay una sesión activa.", ErrorCodes.Unauthorized);
+          
+
+            var d = await repository.GetDetalleAsync(pacienteId, psicopedagogoId, ct);
+
+            if (d is null)
+                return Result<PacienteDetalleDto>.Failure($"El paciente con ID {pacienteId} no fue encontrado.", ErrorCodes.NotFound);
+
+            var ultima = d.UltimaSesion is null
+                ? null
+                : new UltimaSesionDto(d.UltimaSesion.Id, d.UltimaSesion.Fecha, d.UltimaSesion.TiposEjercicio);
+
+            return Result<PacienteDetalleDto>.Success(new PacienteDetalleDto(
+                d.Id, d.Nombre, d.Apellido, d.Documento, d.FechaNacimiento,
+                d.Telefono, d.Direccion, d.Genero, d.Objetivo, d.Observaciones, ultima));
         }
 
         public async Task<Result<RegistroPacienteResult>> CreatePacienteAsync(CreatePacienteRequest request, CancellationToken ct = default)

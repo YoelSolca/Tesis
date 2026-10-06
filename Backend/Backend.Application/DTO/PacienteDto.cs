@@ -12,6 +12,14 @@ public record PacienteDto(int personaId, string Direccion, DateTime FechaAlta)
 /// <summary>Fila de la lista de pacientes. El Front calcula edad e iniciales a partir de estos datos.</summary>
 public record PacienteListItemDto(int Id, string Nombre, string? Apellido, string? Documento, DateOnly FechaNacimiento);
 
+/// <summary>Todo lo que necesita la pantalla Información del paciente, vista por el psicopedagogo autenticado.</summary>
+public record PacienteDetalleDto(
+    int Id, string Nombre, string Apellido, string Documento, DateOnly FechaNacimiento,
+    string Telefono, string Direccion, string Genero,
+    string? Objetivo, string? Observaciones, UltimaSesionDto? UltimaSesion);
+
+public record UltimaSesionDto(int Id, DateTime Fecha, IReadOnlyList<string> TiposEjercicio);
+
 public record PagedResponse<T>(IReadOnlyList<T> Items, int Total, int Page, int PageSize);
 
 /// <summary>Creado = true si la persona se registró por primera vez; false si ya existía y solo se vinculó/reactivó la atención.</summary>

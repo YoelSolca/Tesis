@@ -36,8 +36,44 @@ namespace Backend.Infrastructure.Repositories
             return new PagedResult<PacienteResumen>(items, total);
         }
 
-        public async Task<Paciente?> GetByPacienteIdAsync(int id, CancellationToken ct = default)
-        => await context.Paciente.AsNoTracking().FirstOrDefaultAsync(p => p.PersonaId == id, ct);
+        public async Task<PacienteDetalle?> GetDetalleAsync(int pacienteId, int psicopedagogoId, CancellationToken ct = default)
+        {
+            var atenciones = context.Set<PsicopedagogoPaciente>().AsNoTracking()
+                .Where(x => x.PacienteId == pacienteId && x.PsicopedagogoId == psicopedagogoId);
+
+            // Consulta 1: datos personales + intervención. Al partir del vínculo, si no existe devuelve null.
+            var datos = await atenciones.Select(x => new
+            {
+                x.PacienteId,
+                x.Paciente.Persona.Nombre,
+                x.Paciente.Persona.Apellido,
+                x.Paciente.Persona.Documento,
+                x.Paciente.Persona.FechaNacimiento,
+                x.Paciente.Persona.Telefono,
+                x.Paciente.Persona.Genero,
+                x.Paciente.Direccion,
+                x.Intervencion.objetivo,
+                x.Intervencion.observaciones
+            }).FirstOrDefaultAsync(ct);
+
+            if (datos is null) return null;
+
+            // Consulta 2: última sesión con los tipos de ejercicio distintos que se trabajaron.
+            var ultima = await atenciones.SelectMany(x => x.Sesiones)
+                .OrderByDescending(s => s.Fecha)
+                .Select(s => new
+                {
+                    s.Id,
+                    s.Fecha,
+                    Tipos = s.SesionEjercicios.Select(se => se.Ejercicio.TipoEjercicio.Nombre).Distinct().ToList()
+                })
+                .FirstOrDefaultAsync(ct);
+
+            return new PacienteDetalle(datos.PacienteId, datos.Nombre, datos.Apellido, datos.Documento,
+                datos.FechaNacimiento, datos.Telefono, datos.Direccion, datos.Genero,
+                datos.objetivo, datos.observaciones,
+                ultima is null ? null : new UltimaSesionResumen(ultima.Id, ultima.Fecha, ultima.Tipos));
+        }
 
         public async Task<Paciente?> GetByDocumentoAsync(string documento, CancellationToken ct = default)
         => await context.Paciente.AsNoTracking().FirstOrDefaultAsync(p => p.Persona.Documento == documento, ct);
