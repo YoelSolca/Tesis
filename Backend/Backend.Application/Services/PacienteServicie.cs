@@ -102,18 +102,6 @@ namespace Backend.Application.Services
             return Result<RegistroPacienteResult>.Success(new RegistroPacienteResult(PacienteDto.FromEntity(paciente), true));
         }
 
-        public async Task<Result<bool>> DesasignarPsicopedagogoAsync(int pacienteId, int psicopedagogoId, CancellationToken ct = default)
-        {
-            // Finaliza la atención sin borrar el vínculo: el historial (intervención y sesiones) se conserva.
-            if (!await repository.FinalizarAtencionAsync(pacienteId, psicopedagogoId, DateTime.Now, ct))
-            {
-                return Result<bool>.Failure($"El psicopedagogo {psicopedagogoId} no tiene una atención vigente con el paciente {pacienteId}.", ErrorCodes.NotFound);
-            }
-
-            logger.LogInformation("Psicopedagogo {PsicopedagogoId} finalizó la atención del paciente {PacienteId}", psicopedagogoId, pacienteId);
-            return Result<bool>.Success(true);
-        }
-
         public async Task<Result<IntervencionDto>> GetIntervencionAsync(int pacienteId, int psicopedagogoId, CancellationToken ct = default)
         {
             var intervencion = await repository.GetIntervencionAsync(pacienteId, psicopedagogoId, ct);

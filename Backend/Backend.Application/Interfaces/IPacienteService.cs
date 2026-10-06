@@ -13,9 +13,6 @@ namespace Backend.Application.Interfaces
 
         Task<Result<PacienteDto>> UpdatePacienteAsync(int pacienteId, UpsertPacienteRequest request, CancellationToken ct = default);
 
-        /// <summary>Finaliza la atención (FechaFin); no borra el vínculo ni el historial.</summary>
-        Task<Result<bool>> DesasignarPsicopedagogoAsync(int pacienteId, int psicopedagogoId, CancellationToken ct = default);
-
         Task<Result<IntervencionDto>> GetIntervencionAsync(int pacienteId, int psicopedagogoId, CancellationToken ct = default);
 
         Task<Result<IntervencionDto>> UpdateIntervencionAsync(int pacienteId, int psicopedagogoId, UpsertIntervencionRequest request, CancellationToken ct = default);

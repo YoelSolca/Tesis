@@ -79,16 +79,6 @@ namespace Backend.Api.Controllers
             return result.IsSuccess ? Ok(result.Value) : ToError(result.Error, result.ErrorCode);
         }
 
-        /// <summary>Finaliza la atención del psicopedagogo con el paciente. El historial se conserva.</summary>
-        [HttpDelete("{pacienteId:int}/psicopedagogos/{psicopedagogoId:int}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DesasignarPsicopedagogo(int pacienteId, int psicopedagogoId, CancellationToken ct)
-        {
-            var result = await pacienteService.DesasignarPsicopedagogoAsync(pacienteId, psicopedagogoId, ct);
-            return result.IsSuccess ? NoContent() : ToError(result.Error, result.ErrorCode);
-        }
-
         private ObjectResult ToError(string? error, string? code)
         {
             var status = code switch
