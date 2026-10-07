@@ -8,6 +8,9 @@ namespace Backend.Domain.Interfaces
 
         Task<Paciente?> GetByDocumentoAsync(string documento, CancellationToken ct = default);
 
+        /// <summary>True si todos los ids existen en el catálogo de tipos de dificultad.</summary>
+        Task<bool> TiposDificultadExistenAsync(IReadOnlyCollection<int> ids, CancellationToken ct = default);
+
         /// <summary>Lookup con seguimiento y la Persona cargada, para modificar y guardar con <see cref="UpdateAsync"/>.</summary>
         Task<Paciente?> GetForUpdateAsync(int id, CancellationToken ct = default);
 

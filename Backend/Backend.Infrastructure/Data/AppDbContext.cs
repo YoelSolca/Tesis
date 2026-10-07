@@ -13,6 +13,7 @@ namespace Backend.Infrastructure.Data
         public DbSet<Ejercicio> Ejercicio => Set<Ejercicio>();
         public DbSet<TipoEjercicio> TipoEjercicio => Set<TipoEjercicio>();
         public DbSet<Intervencion> Intervencion => Set<Intervencion>();
+        public DbSet<TipoDificultad> TipoDificultad => Set<TipoDificultad>();
         public DbSet<Sesion> Sesion => Set<Sesion>();
         public DbSet<Resultado> Resultado => Set<Resultado>();
         public DbSet<Metrica> Metrica => Set<Metrica>();

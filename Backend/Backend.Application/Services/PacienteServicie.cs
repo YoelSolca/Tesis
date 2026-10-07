@@ -23,7 +23,7 @@ namespace Backend.Application.Services
     {
         private const int MaxPageSize = 50;
 
-        public async Task<Result<PagedResponse<PacienteListItemDto>>> GetPacientesAsync(string? search, int page, int pageSize, CancellationToken ct = default)
+        public async Task<Result<PagedResponse<PacienteListItemDto>>> GetPacientesAsync(string? search, int? tipoDificultadId, int page, int pageSize, CancellationToken ct = default)
         {
             if (usuarioActual.PsicopedagogoId is not int psicopedagogoId)
             {
@@ -34,7 +34,7 @@ namespace Backend.Application.Services
             pageSize = Math.Clamp(pageSize, 1, MaxPageSize);
 
             return Result<PagedResponse<PacienteListItemDto>>.Success(
-                await queries.GetPacientesAsync(psicopedagogoId, search, page, pageSize, ct));
+                await queries.GetPacientesAsync(psicopedagogoId, search, tipoDificultadId, page, pageSize, ct));
         }
 
         public async Task<Result<PacienteDetalleDto>> GetDetalleAsync(int pacienteId, CancellationToken ct = default)
@@ -58,6 +58,12 @@ namespace Backend.Application.Services
                 return Result<RegistroPacienteResult>.Failure($"El psicopedagogo con ID {request.PsicopedagogoId} no fue encontrado.", ErrorCodes.NotFound);
             }
 
+            var tiposDificultadIds = request.TiposDificultadIds?.Distinct().ToList() ?? [];
+            if (tiposDificultadIds.Count > 0 && !await repository.TiposDificultadExistenAsync(tiposDificultadIds, ct))
+            {
+                return Result<RegistroPacienteResult>.Failure("Alguno de los tipos de dificultad indicados no existe.", ErrorCodes.ValidationError);
+            }
+
             // El paciente es único en todo el sistema: si el documento ya existe no se duplica, solo se
             // vincula a este psicopedagogo. Los datos personales guardados no se sobrescriben.
             var existente = await repository.GetByDocumentoAsync(request.Documento, ct);
@@ -71,7 +77,7 @@ namespace Backend.Application.Services
                     return Result<RegistroPacienteResult>.Failure($"El paciente con documento {request.Documento} ya está registrado en tu lista de pacientes.", ErrorCodes.Duplicate);
                 }
 
-                await IniciarOReactivarAtencionAsync(existente.PersonaId, request.PsicopedagogoId, atencion, request.Objetivo, request.Observaciones, ct);
+                await IniciarOReactivarAtencionAsync(existente.PersonaId, request.PsicopedagogoId, atencion, request.Objetivo, request.Observaciones, tiposDificultadIds, ct);
 
                 logger.LogInformation("Paciente existente {Id} vinculado al psicopedagogo {PsicopedagogoId}", existente.PersonaId, request.PsicopedagogoId);
                 return Result<RegistroPacienteResult>.Success(new RegistroPacienteResult(PacienteDto.FromEntity(existente), false));
@@ -106,7 +112,8 @@ namespace Backend.Application.Services
                         Intervencion = new Intervencion
                         {
                             objetivo = request.Objetivo,
-                            observaciones = request.Observaciones
+                            observaciones = request.Observaciones,
+                            TiposDificultad = tiposDificultadIds.Select(id => new IntervencionTipoDificultad { TipoDificultadId = id }).ToList()
                         }
                     }
                 }
@@ -169,7 +176,7 @@ namespace Backend.Application.Services
         }
 
         /// <summary>Crea la atención con su intervención vacía o inicial; si ya existió y estaba finalizada, la reabre con su mismo historial.</summary>
-        private async Task IniciarOReactivarAtencionAsync(int pacienteId, int psicopedagogoId, PsicopedagogoPaciente? atencion, string? objetivo, string? observaciones, CancellationToken ct)
+        private async Task IniciarOReactivarAtencionAsync(int pacienteId, int psicopedagogoId, PsicopedagogoPaciente? atencion, string? objetivo, string? observaciones, IReadOnlyList<int> tiposDificultadIds, CancellationToken ct)
         {
             if (atencion is null)
             {
@@ -181,7 +188,8 @@ namespace Backend.Application.Services
                     Intervencion = new Intervencion
                     {
                         objetivo = objetivo,
-                        observaciones = observaciones
+                        observaciones = observaciones,
+                        TiposDificultad = tiposDificultadIds.Select(id => new IntervencionTipoDificultad { TipoDificultadId = id }).ToList()
                     }
                 }, ct);
             }

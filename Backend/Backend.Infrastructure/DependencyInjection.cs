@@ -20,10 +20,12 @@ namespace Backend.Infrastructure
                 sql => sql.EnableRetryOnFailure());
             });
 
+            services.AddScoped<DevelopmentDataSeeder>();
             services.AddScoped<IPersonaRepository, PersonaRepository>();
             services.AddScoped<IPsicopedagogoRepository, PsicopedagogoRepository>();
             services.AddScoped<IPacienteRepository, PacienteRepository>();
             services.AddScoped<IPacienteQueries, PacienteQueries>();
+            services.AddScoped<ITipoDificultadQueries, TipoDificultadQueries>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
             services.AddScoped<ITokenGenerator, JwtTokenGenerator>();

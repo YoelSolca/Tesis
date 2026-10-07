@@ -4,6 +4,7 @@ using Backend.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261006222713_TipoDificultad")]
+    partial class TipoDificultad
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,68 +46,6 @@ namespace Backend.Infrastructure.Migrations
                     b.HasIndex("TipoEjercicioId");
 
                     b.ToTable("Ejercicio", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nombre = "Encontrá la imagen igual",
-                            TipoEjercicioId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nombre = "Sombras y animales",
-                            TipoEjercicioId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nombre = "Clasificar colores",
-                            TipoEjercicioId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Nombre = "Memorama",
-                            TipoEjercicioId = 2
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Nombre = "Conectar palabras",
-                            TipoEjercicioId = 3
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Nombre = "Comprensión de texto",
-                            TipoEjercicioId = 3
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Nombre = "Dictado de palabras",
-                            TipoEjercicioId = 4
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Nombre = "Sumas y restas",
-                            TipoEjercicioId = 5
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Nombre = "Series numéricas",
-                            TipoEjercicioId = 5
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Nombre = "Desafío de números",
-                            TipoEjercicioId = 5
-                        });
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Informe", b =>
@@ -211,29 +152,6 @@ namespace Backend.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Metrica", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Descripcion = "Cantidad de movimientos realizados",
-                            Nombre = "movimientos",
-                            TipoAgregacion = "Suma"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Descripcion = "Estímulos omitidos",
-                            Nombre = "omisiones",
-                            TipoAgregacion = "Suma"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Descripcion = "Nivel máximo alcanzado",
-                            Nombre = "nivelAlcanzado",
-                            TipoAgregacion = "Maximo"
-                        });
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Paciente", b =>
@@ -491,39 +409,7 @@ namespace Backend.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TipoEjercicio", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nombre = "Atención",
-                            icono = "atencion"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nombre = "Memoria",
-                            icono = "memoria"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nombre = "Lectura",
-                            icono = "lectura"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Nombre = "Escritura",
-                            icono = "escritura"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Nombre = "Cálculo",
-                            icono = "calculo"
-                        });
+                    b.ToTable("TipoEjercicio");
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Usuario", b =>

@@ -10,6 +10,9 @@ namespace Backend.Infrastructure.Repositories
         public async Task<Paciente?> GetByDocumentoAsync(string documento, CancellationToken ct = default)
         => await context.Paciente.AsNoTracking().FirstOrDefaultAsync(p => p.Persona.Documento == documento, ct);
 
+        public async Task<bool> TiposDificultadExistenAsync(IReadOnlyCollection<int> ids, CancellationToken ct = default)
+        => await context.TipoDificultad.CountAsync(t => ids.Contains(t.Id), ct) == ids.Count;
+
         public async Task<Paciente?> GetForUpdateAsync(int id, CancellationToken ct = default)
         => await context.Paciente.Include(p => p.Persona).FirstOrDefaultAsync(p => p.PersonaId == id, ct);
 

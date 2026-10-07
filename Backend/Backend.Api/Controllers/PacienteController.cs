@@ -14,9 +14,9 @@ namespace Backend.Api.Controllers
         [HttpGet]
         [ProducesResponseType<PagedResponse<PacienteListItemDto>>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> GetAll([FromQuery] string? search, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, CancellationToken ct = default)
+        public async Task<IActionResult> GetAll([FromQuery] string? search, [FromQuery] int? tipoDificultadId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, CancellationToken ct = default)
         {
-            var result = await pacienteService.GetPacientesAsync(search, page, pageSize, ct);
+            var result = await pacienteService.GetPacientesAsync(search, tipoDificultadId, page, pageSize, ct);
             return result.IsSuccess ? Ok(result.Value) : ToError(result.Error, result.ErrorCode);
         }
 

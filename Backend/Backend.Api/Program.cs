@@ -3,6 +3,7 @@ using Backend.Application;
 using Backend.Application.Interfaces;
 using Backend.Application.Options;
 using Backend.Infrastructure;
+using Backend.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -97,5 +98,18 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    try
+    {
+        await scope.ServiceProvider.GetRequiredService<DevelopmentDataSeeder>().SeedAsync();
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "No se pudieron sembrar los datos de desarrollo.");
+    }
+}
 
 app.Run();

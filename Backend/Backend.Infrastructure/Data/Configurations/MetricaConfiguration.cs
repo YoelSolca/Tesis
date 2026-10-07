@@ -17,6 +17,11 @@ namespace Backend.Infrastructure.Data.Configurations
             builder.Property(m => m.TipoAgregacion).HasConversion<string>().HasMaxLength(20);
 
             builder.HasIndex(m => m.Nombre).IsUnique();
+
+            builder.HasData(
+                new Metrica { Id = 1, Nombre = "movimientos", Descripcion = "Cantidad de movimientos realizados", TipoAgregacion = TipoAgregacion.Suma },
+                new Metrica { Id = 2, Nombre = "omisiones", Descripcion = "Estímulos omitidos", TipoAgregacion = TipoAgregacion.Suma },
+                new Metrica { Id = 3, Nombre = "nivelAlcanzado", Descripcion = "Nivel máximo alcanzado", TipoAgregacion = TipoAgregacion.Maximo });
         }
     }
 }

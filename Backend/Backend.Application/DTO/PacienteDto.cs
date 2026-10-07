@@ -10,13 +10,15 @@ public record PacienteDto(int personaId, string Direccion, DateTime FechaAlta)
 }
 
 /// <summary>Fila de la lista de pacientes. El Front calcula edad e iniciales a partir de estos datos.</summary>
-public record PacienteListItemDto(int Id, string Nombre, string Apellido, string Documento, DateOnly FechaNacimiento);
+public record PacienteListItemDto(int Id, string Nombre, string Apellido, string Documento, DateOnly FechaNacimiento, IReadOnlyList<string> TiposDificultad);
+
+public record TipoDificultadDto(int Id, string Nombre);
 
 /// <summary>Todo lo que necesita la pantalla Información del paciente, vista por el psicopedagogo autenticado.</summary>
 public record PacienteDetalleDto(
     int Id, string Nombre, string Apellido, string Documento, DateOnly FechaNacimiento,
     string Telefono, string Direccion, string Genero,
-    string? Objetivo, string? Observaciones, UltimaSesionDto? UltimaSesion);
+    string? Objetivo, string? Observaciones, IReadOnlyList<TipoDificultadDto> TiposDificultad, UltimaSesionDto? UltimaSesion);
 
 public record UltimaSesionDto(int Id, DateTime Fecha, IReadOnlyList<string> TiposEjercicio);
 
@@ -41,7 +43,8 @@ public record CreatePacienteRequest(
     DateOnly FechaNacimiento,
     DateTime FechaAlta,
     [StringLength(50)] string? Objetivo,
-    [StringLength(100)] string? Observaciones
+    [StringLength(100)] string? Observaciones,
+    IReadOnlyList<int>? TiposDificultadIds
 );
 
 /// <summary>Solo datos personales del paciente. Objetivo y observaciones se editan en la intervención de cada psicopedagogo.</summary>

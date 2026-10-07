@@ -8,7 +8,7 @@ namespace Backend.Infrastructure.Queries
 {
     public class PacienteQueries(AppDbContext context) : IPacienteQueries
     {
-        public async Task<PagedResponse<PacienteListItemDto>> GetPacientesAsync(int psicopedagogoId, string? search, int page, int pageSize, CancellationToken ct = default)
+        public async Task<PagedResponse<PacienteListItemDto>> GetPacientesAsync(int psicopedagogoId, string? search, int? tipoDificultadId, int page, int pageSize, CancellationToken ct = default)
         {
             var query = context.Paciente.AsNoTracking()
                 .Where(p => p.PsicopedagogoPacientes.Any(pp => pp.PsicopedagogoId == psicopedagogoId && pp.FechaFin == null));
@@ -21,6 +21,12 @@ namespace Backend.Infrastructure.Queries
                                       || p.Persona.Documento.Contains(term));
             }
 
+            if (tipoDificultadId is int tipoId)
+            {
+                query = query.Where(p => p.PsicopedagogoPacientes.Any(pp => pp.PsicopedagogoId == psicopedagogoId
+                    && pp.Intervencion.TiposDificultad.Any(t => t.TipoDificultadId == tipoId)));
+            }
+
             var total = await query.CountAsync(ct);
 
             var items = await query
@@ -29,7 +35,13 @@ namespace Backend.Infrastructure.Queries
                 .ThenBy(p => p.PersonaId)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Select(p => new PacienteListItemDto(p.PersonaId, p.Persona.Nombre, p.Persona.Apellido, p.Persona.Documento, p.Persona.FechaNacimiento))
+                .Select(p => new PacienteListItemDto(
+                    p.PersonaId, p.Persona.Nombre, p.Persona.Apellido, p.Persona.Documento, p.Persona.FechaNacimiento,
+                    p.PsicopedagogoPacientes
+                        .Where(pp => pp.PsicopedagogoId == psicopedagogoId)
+                        .SelectMany(pp => pp.Intervencion.TiposDificultad)
+                        .Select(t => t.TipoDificultad.Nombre)
+                        .ToList()))
                 .ToListAsync(ct);
 
             return new PagedResponse<PacienteListItemDto>(items, total, page, pageSize);
@@ -68,9 +80,14 @@ namespace Backend.Infrastructure.Queries
                 })
                 .FirstOrDefaultAsync(ct);
 
+            // Consulta 3: dificultades trabajadas en la intervención.
+            var dificultades = await atenciones.SelectMany(x => x.Intervencion.TiposDificultad)
+                .Select(t => new TipoDificultadDto(t.TipoDificultad.Id, t.TipoDificultad.Nombre))
+                .ToListAsync(ct);
+
             return new PacienteDetalleDto(datos.PacienteId, datos.Nombre, datos.Apellido, datos.Documento,
                 datos.FechaNacimiento, datos.Telefono, datos.Direccion, datos.Genero,
-                datos.objetivo, datos.observaciones,
+                datos.objetivo, datos.observaciones, dificultades,
                 ultima is null ? null : new UltimaSesionDto(ultima.Id, ultima.Fecha, ultima.Tipos));
         }
     }
