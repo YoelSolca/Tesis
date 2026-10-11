@@ -24,4 +24,10 @@ export interface PacientesQuery {
   pageSize?: number;
 }
 
+export interface TipoDificultad {
+  id: number;
+  nombre: string;
+}
+
+
 export type PacientesResponse = PagedResponse<PacienteListItem>;

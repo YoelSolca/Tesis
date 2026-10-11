@@ -36,7 +36,6 @@ function DatosPersonales({
   editing,
   form,
   setForm,
-  onClose,
   onEdit,
 }: {
   paciente: PacienteDetalle;
@@ -131,9 +130,10 @@ function DatosPersonales({
                 ? form?.documento
                 : Number(paciente.documento).toLocaleString("es-AR")
             }
-            onChange={(e) =>
-              form && setForm({ ...form, documento: e.target.value })
-            }
+            onChange={(e) => {
+              const documento = e.target.value.replace(/[^\d+\s-]/g, "");
+              form && setForm({ ...form, documento: documento });
+            }}
           />
         </Grid>
       </Grid>
@@ -167,9 +167,10 @@ function DatosPersonales({
             fullWidth
             label="Teléfono"
             value={editing ? form?.telefono : paciente.telefono}
-            onChange={(e) =>
-              form && setForm({ ...form, telefono: e.target.value })
-            }
+            onChange={(e) => {
+              const telefono = e.target.value.replace(/[^\d+\s-]/g, "");
+              form && setForm({ ...form, telefono: telefono });
+            }}
           />
         </Grid>
         <Grid size={4}>

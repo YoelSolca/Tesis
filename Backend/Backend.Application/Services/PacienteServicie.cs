@@ -136,8 +136,15 @@ namespace Backend.Application.Services
                 : Result<IntervencionDto>.Success(IntervencionDto.FromEntity(intervencion));
         }
 
-        public async Task<Result<IntervencionDto>> UpdateIntervencionAsync(int pacienteId, int psicopedagogoId, UpsertIntervencionRequest request, CancellationToken ct = default)
+        public async Task<Result<IntervencionDto>> UpdateIntervencionAsync(int pacienteId, UpsertIntervencionRequest request, CancellationToken ct = default)
         {
+
+            if (usuarioActual.PsicopedagogoId is not int psicopedagogoId)
+            {
+                return Result<IntervencionDto>.Failure("No hay una sesión activa.", ErrorCodes.Unauthorized);
+            }
+
+
             if (!await repository.UpdateIntervencionAsync(pacienteId, psicopedagogoId, request.Objetivo, request.Observaciones, ct))
             {
                 return Result<IntervencionDto>.Failure($"El psicopedagogo {psicopedagogoId} no atiende ni atendió al paciente {pacienteId}.", ErrorCodes.NotFound);
@@ -161,6 +168,12 @@ namespace Backend.Application.Services
                 return Result<PacienteDto>.Failure($"El documento {request.Documento} ya pertenece a otra persona.", ErrorCodes.Duplicate);
             }
 
+            var atencion = paciente.PsicopedagogoPacientes.FirstOrDefault(p => p.PsicopedagogoId == usuarioActual.PsicopedagogoId);
+
+            if (atencion is null)
+                return Result<PacienteDto>.Failure("El psicopedagogo no atiende a este paciente", ErrorCodes.NotFound);
+
+
             paciente.Direccion = request.Direccion;
             paciente.Persona.Nombre = request.Nombre;
             paciente.Persona.Apellido = request.Apellido;
@@ -168,6 +181,9 @@ namespace Backend.Application.Services
             paciente.Persona.Documento = request.Documento;
             paciente.Persona.Genero = request.Genero;
             paciente.Persona.FechaNacimiento = request.FechaNacimiento;
+            atencion.Intervencion.objetivo = request.Objetivo;
+            atencion.Intervencion.observaciones = request.Observaciones;
+
 
             await repository.UpdateAsync(paciente, ct);
             logger.LogInformation("Paciente actualizado: {Id} ({documento})", paciente.PersonaId, paciente.Persona.Documento);

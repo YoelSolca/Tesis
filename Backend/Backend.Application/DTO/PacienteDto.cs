@@ -56,5 +56,6 @@ public record UpsertPacienteRequest(
     [StringLength(20)] string Documento,
     [StringLength(1)] string Genero,
     DateOnly FechaNacimiento,
-    DateTime FechaAlta
+    [StringLength(50)] string? Objetivo,
+    [StringLength(100)] string? Observaciones
     );

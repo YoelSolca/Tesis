@@ -2,14 +2,15 @@ import { PacientesResponse } from "../paciente.model";
 import { PacienteDetalle } from "../PacienteDetalle.model";
 import backendApi from "./api/backendApi";
 
-export const obtenerPacientes = async (token: string, search: string): Promise<PacientesResponse> => {
+export const obtenerPacientes = async (token: string, search: string, tipoDificultadId?: number): Promise<PacientesResponse> => {
   try {
     const response = await backendApi(token).get("/api/pacientes", {
         params: {
            search: search,
            page: 1,
            pageSize: 10,
-        }
+           tipoDificultadId: tipoDificultadId,
+        },
     });
 
     return response.data;
@@ -38,4 +39,4 @@ export const guardarCambiosPaciente = async (token: string, id: string, paciente
     console.error("Error al guardar cambios del paciente:", error);
     throw error;
   }
-}
+};

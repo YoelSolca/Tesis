@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { PacienteListItem } from "../paciente.model";
+import type { PacienteListItem, TipoDificultad } from "../paciente.model";
 import {
   Button,
   TableContainer,
@@ -21,22 +21,19 @@ import { useNavigate } from "react-router-dom";
 import { PageHeader } from "../components/common";
 import SearchIcon from "@mui/icons-material/Search";
 import { obtenerPacientes } from "../actions/pacientes.action";
+import { obtenerTiposDificultad } from "../actions/api/tiposDificultad.action";
 function Pacientes() {
   const [pacientes, setPacientes] = useState<PacienteListItem[]>([]);
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [tiposDificultad, setTiposDificultad] = useState<TipoDificultad[]>([]);
+  const [tipoId, setTipoId] = useState<number | "">("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   // Estado para almacenar el valor de búsqueda con debounce
   //debouncedSearch se actualiza después de un retraso de 300 ms desde la última vez que el usuario escribió en el campo de búsqueda.
   //setDebouncedSearch se utiliza para actualizar el estado de debouncedSearch después del retraso.
-  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const difficulties = [
-    "Dificultades de atención",
-    "Dificultades en lectoescritura",
-    "Dificultades en cálculo",
-    "Dificultades en memoria",
-  ];
   const token = "";
 
   //Se ejecuta cada vez que el valor de search cambia, y establece un temporizador para actualizar debouncedSearch después de 300 ms.
@@ -47,15 +44,24 @@ function Pacientes() {
   }, [search]);
 
   useEffect(() => {
-    obtenerPacientes(token, debouncedSearch)
+    obtenerPacientes(token, debouncedSearch, tipoId === "" ? undefined : tipoId)
       .then((response) => {
         setPacientes(response.items);
       })
       .catch((error) => {
         console.error("Error al obtener pacientes:", error);
       });
-  }, [debouncedSearch]);
-  //Se ejecuta cada vez que debouncedSearch cambia, y realiza una solicitud de búsqueda a la API para obtener los pacientes que coinciden con el término de búsqueda.
+  }, [debouncedSearch, tipoId]); // Se ejecuta cada vez que debouncedSearch o tipoId cambian, y realiza la solicitud para obtener los pacientes filtrados según los criterios de búsqueda y tipo de dificultad seleccionados.
+
+  useEffect(() => {
+    obtenerTiposDificultad(token)
+      .then((response) => {
+        setTiposDificultad(response);
+      })
+      .catch((error) =>
+        console.error("Error al obtener tipos de dificultad:", error),
+      );
+  }, []);
 
   return (
     <>
@@ -94,13 +100,20 @@ function Pacientes() {
           select
           size="small"
           label="Tipo de dificultad"
-          value=""
+          value={tipoId}
           className="w-full sm:w-[240px] bg-white"
+          slotProps={{
+            select: { displayEmpty: true },
+            inputLabel: { shrink: true },
+          }}
+          onChange={(e) => {
+            setTipoId(e.target.value === "" ? "" : Number(e.target.value));
+          }}
         >
-          <MenuItem value="Todas">Todas</MenuItem>
-          {difficulties.map((d) => (
-            <MenuItem key={d} value={d}>
-              {d}
+          <MenuItem value="">Todos</MenuItem>
+          {tiposDificultad.map((d) => (
+            <MenuItem key={d.id} value={d.id}>
+              {d.nombre}
             </MenuItem>
           ))}
         </TextField>

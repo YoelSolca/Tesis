@@ -74,12 +74,12 @@ namespace Backend.Api.Controllers
             return result.IsSuccess ? Ok(result.Value) : ToError(result.Error, result.ErrorCode);
         }
 
-        [HttpPut("{pacienteId:int}/psicopedagogos/{psicopedagogoId:int}/intervencion")]
+        [HttpPut("{pacienteId:int}/intervencion")]
         [ProducesResponseType<IntervencionDto>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateIntervencion(int pacienteId, int psicopedagogoId, UpsertIntervencionRequest request, CancellationToken ct)
+        public async Task<IActionResult> UpdateIntervencion(int pacienteId, UpsertIntervencionRequest request, CancellationToken ct)
         {
-            var result = await pacienteService.UpdateIntervencionAsync(pacienteId, psicopedagogoId, request, ct);
+            var result = await pacienteService.UpdateIntervencionAsync(pacienteId, request, ct);
             return result.IsSuccess ? Ok(result.Value) : ToError(result.Error, result.ErrorCode);
         }
 
