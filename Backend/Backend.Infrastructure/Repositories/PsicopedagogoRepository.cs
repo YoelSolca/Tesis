@@ -14,7 +14,7 @@ namespace Backend.Infrastructure.Repositories
             return psicopedagogo;
         }
 
-        public Task<Psicopedagogo?> GetByPsicopedagogoIdAsync(int psicopedagogoId, CancellationToken ct = default) 
+        public Task<Psicopedagogo?> GetByPsicopedagogoIdAsync(int psicopedagogoId, CancellationToken ct = default)
             => context.Psicopedagogo.AsNoTracking().FirstOrDefaultAsync(p => p.PersonaId == psicopedagogoId, ct);
 
         public async Task UpdateAsync(Psicopedagogo psicopedagogo, CancellationToken ct = default)

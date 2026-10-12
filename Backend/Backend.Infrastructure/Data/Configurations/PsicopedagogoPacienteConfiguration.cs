@@ -33,8 +33,6 @@ namespace Backend.Infrastructure.Data.Configurations
                 .WithOne(i => i.PsicopedagogoPaciente)
                 .HasForeignKey<PsicopedagogoPaciente>(x => x.IntervencionId)
                 .OnDelete(DeleteBehavior.Restrict);
-
         }
-
     }
 }

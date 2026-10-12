@@ -17,6 +17,5 @@ public interface ITokenGenerator
 
 public interface IUsuarioActual
 {
-    /// <summary>Id del autor autenticado (claim del JWT), o null si no hay sesión.</summary>
     int? PsicopedagogoId { get; }
 }

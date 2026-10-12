@@ -1,5 +1,5 @@
-import { TipoDificultad } from "../../paciente.model";
-import backendApi from "./backendApi";
+import { TipoDificultad } from "../Model/paciente.model";
+import backendApi from "./api/backendApi";
 
 
 

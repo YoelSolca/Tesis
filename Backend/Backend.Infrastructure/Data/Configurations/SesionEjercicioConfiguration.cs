@@ -6,7 +6,6 @@ namespace Backend.Infrastructure.Data.Configurations
 {
     public class SesionEjercicioConfiguration : IEntityTypeConfiguration<SesionEjercicio>
     {
-
         public void Configure(EntityTypeBuilder<SesionEjercicio> builder)
         {
 
@@ -26,7 +25,5 @@ namespace Backend.Infrastructure.Data.Configurations
                 .HasForeignKey(x => x.EjercicioId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
-
-
     }
 }

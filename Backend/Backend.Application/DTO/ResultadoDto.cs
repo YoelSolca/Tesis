@@ -29,7 +29,6 @@ public record MetricaValorRequest(
     [Required] decimal Valor
 );
 
-/// <summary>Crea el resultado del ejercicio, o lo reemplaza si se repitió dentro de la misma sesión.</summary>
 public record UpsertResultadoRequest(
     [Required] int PsicopedagogoId,
     [Range(0, int.MaxValue)] int Aciertos,

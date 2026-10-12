@@ -1,6 +1,5 @@
 using Backend.Application.DTO;
 using Backend.Application.Interfaces;
-using Backend.Domain.Entities;
 using Backend.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,20 +10,20 @@ namespace Backend.Infrastructure.Queries
         public async Task<PagedResponse<PacienteListItemDto>> GetPacientesAsync(int psicopedagogoId, string? search, int? tipoDificultadId, int page, int pageSize, CancellationToken ct = default)
         {
             var query = context.Paciente.AsNoTracking()
-                .Where(p => p.PsicopedagogoPacientes.Any(pp => pp.PsicopedagogoId == psicopedagogoId && pp.FechaFin == null));
+                                        .Where(p => p.PsicopedagogoPacientes.Any(pp => pp.PsicopedagogoId == psicopedagogoId 
+                                         && pp.FechaFin == null));
 
-            if (!string.IsNullOrWhiteSpace(search))
-            {
+            if (!string.IsNullOrWhiteSpace(search)){
                 var term = search.Trim();
                 query = query.Where(p => p.Persona.Nombre.Contains(term)
                                       || p.Persona.Apellido.Contains(term)
                                       || p.Persona.Documento.Contains(term));
             }
 
-            if (tipoDificultadId is int tipoId)
-            {
+            if (tipoDificultadId is int tipoId) {
                 query = query.Where(p => p.PsicopedagogoPacientes.Any(pp => pp.PsicopedagogoId == psicopedagogoId
-                    && pp.Intervencion.TiposDificultad.Any(t => t.TipoDificultadId == tipoId)));
+                                                                    && pp.Intervencion.TiposDificultad.Any(
+                                                                    t => t.TipoDificultadId == tipoId)));
             }
 
             var total = await query.CountAsync(ct);
@@ -47,12 +46,48 @@ namespace Backend.Infrastructure.Queries
             return new PagedResponse<PacienteListItemDto>(items, total, page, pageSize);
         }
 
+        public async Task<PagedResponse<PacienteHistorialItemDto>> GetHistorialAsync(int pacienteId, int psicopedagogoId, int? tipoEjercicioId, DateTime? fecha, int page, int pageSize, CancellationToken ct = default)
+        {
+            var query = context.SesionEjercicio.AsNoTracking()
+                        .Where(se => se.Sesion.PsicopedagogoPaciente.PsicopedagogoId == psicopedagogoId 
+                               && se.Sesion.PsicopedagogoPaciente.PacienteId == pacienteId
+                               && se.Sesion.PsicopedagogoPaciente.FechaFin == null);
+
+            if (tipoEjercicioId is int tipoId)
+                query = query.Where(s => s.Ejercicio.TipoEjercicioId == tipoEjercicioId);
+
+            if (fecha is DateTime f)
+                query = query.Where(s => s.Sesion.Fecha.Date == f.Date);
+
+            var total = await query.CountAsync(ct);
+
+            var items = await query.OrderByDescending(s => s.Sesion.Fecha)
+                       .ThenByDescending(se => se.SesionId)
+                       .Skip((page - 1) * pageSize)
+                       .Take(pageSize)
+                       .Select(se => new PacienteHistorialItemDto(
+                           se.Sesion.Id,
+                           se.EjercicioId,
+                           se.Sesion.Fecha,
+                           se.Ejercicio.TipoEjercicio.Nombre,
+                           se.Ejercicio.Nombre,
+                           se.Resultado.Aciertos,
+                           se.Resultado.Errores,
+                           se.Resultado.TiempoSegundos,
+                           se.Resultado.Observaciones,
+                           se.Resultado.ResultadoMetricas.Select(m => new MetricaValorDto(m.Metrica.Nombre, m.Valor, m.Metrica.Unidad)).ToList()
+                       )).ToListAsync(ct);
+
+
+            return new PagedResponse<PacienteHistorialItemDto>(items, total, page, pageSize);
+        }
+
         public async Task<PacienteDetalleDto?> GetDetalleAsync(int pacienteId, int psicopedagogoId, CancellationToken ct = default)
         {
-            var atenciones = context.Set<PsicopedagogoPaciente>().AsNoTracking()
-                .Where(x => x.PacienteId == pacienteId && x.PsicopedagogoId == psicopedagogoId);
+            var atenciones = context.PsicopedagogoPaciente.AsNoTracking()
+                                    .Where(x => x.PacienteId == pacienteId 
+                                    && x.PsicopedagogoId == psicopedagogoId);
 
-            // Consulta 1: datos personales + intervención. Al partir del vínculo, si no existe devuelve null.
             var datos = await atenciones.Select(x => new
             {
                 x.PacienteId,
@@ -69,7 +104,6 @@ namespace Backend.Infrastructure.Queries
 
             if (datos is null) return null;
 
-            // Consulta 2: última sesión con los tipos de ejercicio distintos que se trabajaron.
             var ultima = await atenciones.SelectMany(x => x.Sesiones)
                 .OrderByDescending(s => s.Fecha)
                 .Select(s => new
@@ -80,10 +114,9 @@ namespace Backend.Infrastructure.Queries
                 })
                 .FirstOrDefaultAsync(ct);
 
-            // Consulta 3: dificultades trabajadas en la intervención.
             var dificultades = await atenciones.SelectMany(x => x.Intervencion.TiposDificultad)
-                .Select(t => new TipoDificultadDto(t.TipoDificultad.Id, t.TipoDificultad.Nombre))
-                .ToListAsync(ct);
+                                               .Select(t => new TipoDificultadDto(t.TipoDificultad.Id, t.TipoDificultad.Nombre))
+                                               .ToListAsync(ct);
 
             return new PacienteDetalleDto(datos.PacienteId, datos.Nombre, datos.Apellido, datos.Documento,
                 datos.FechaNacimiento, datos.Telefono, datos.Direccion, datos.Genero,

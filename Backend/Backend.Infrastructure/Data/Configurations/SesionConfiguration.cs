@@ -5,7 +5,6 @@ namespace Backend.Infrastructure.Data.Configurations
 {
     public class SesionConfiguration : IEntityTypeConfiguration<Sesion>
     {
-
         public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Sesion> builder)
         {
             builder.ToTable("Sesion");

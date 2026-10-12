@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { PacienteListItem, TipoDificultad } from "../paciente.model";
+import type { PacienteListItem, TipoDificultad } from "../Model/paciente.model";
 import {
   Button,
   TableContainer,
@@ -18,10 +18,10 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { formatearEdad } from "../utils/edad";
 import { useNavigate } from "react-router-dom";
-import { PageHeader } from "../components/common";
+import { PageHeader, TablePager } from "../components/common";
 import SearchIcon from "@mui/icons-material/Search";
 import { obtenerPacientes } from "../actions/pacientes.action";
-import { obtenerTiposDificultad } from "../actions/api/tiposDificultad.action";
+import { obtenerTiposDificultad } from "../actions/tiposDificultad.action";
 function Pacientes() {
   const [pacientes, setPacientes] = useState<PacienteListItem[]>([]);
   const navigate = useNavigate();
@@ -29,12 +29,14 @@ function Pacientes() {
   const [tiposDificultad, setTiposDificultad] = useState<TipoDificultad[]>([]);
   const [tipoId, setTipoId] = useState<number | "">("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [page, setPage] = useState(1); // la página que se está viendo
+  const [totalPages, setTotalPages] = useState(1);
 
   // Estado para almacenar el valor de búsqueda con debounce
   //debouncedSearch se actualiza después de un retraso de 300 ms desde la última vez que el usuario escribió en el campo de búsqueda.
   //setDebouncedSearch se utiliza para actualizar el estado de debouncedSearch después del retraso.
 
-  const token = "";
+  const token = import.meta.env.VITE_TOKEN_DEV;
 
   //Se ejecuta cada vez que el valor de search cambia, y establece un temporizador para actualizar debouncedSearch después de 300 ms.
   // Esto ayuda a reducir la cantidad de solicitudes de búsqueda mientras el usuario está escribiendo.
@@ -44,14 +46,20 @@ function Pacientes() {
   }, [search]);
 
   useEffect(() => {
-    obtenerPacientes(token, debouncedSearch, tipoId === "" ? undefined : tipoId)
+    obtenerPacientes(
+      token,
+      debouncedSearch,
+      tipoId === "" ? undefined : tipoId,
+      page,
+    )
       .then((response) => {
         setPacientes(response.items);
+        setTotalPages(Math.ceil(response.total / response.pageSize)); // Calcula el total de páginas según la cantidad de pacientes y el tamaño de página (10)
       })
       .catch((error) => {
         console.error("Error al obtener pacientes:", error);
       });
-  }, [debouncedSearch, tipoId]); // Se ejecuta cada vez que debouncedSearch o tipoId cambian, y realiza la solicitud para obtener los pacientes filtrados según los criterios de búsqueda y tipo de dificultad seleccionados.
+  }, [debouncedSearch, tipoId, page]); // Se ejecuta cada vez que debouncedSearch o tipoId cambian, y realiza la solicitud para obtener los pacientes filtrados según los criterios de búsqueda y tipo de dificultad seleccionados.
 
   useEffect(() => {
     obtenerTiposDificultad(token)
@@ -135,7 +143,7 @@ function Pacientes() {
                 key={p.id}
                 hover
                 className="cursor-pointer"
-                onClick={() => navigate(`/pacientes/${p.id}`)}
+                onClick={() => navigate(`/pacientes/${p.id}/informacion`)}
               >
                 <TableCell component="th" scope="row">
                   {p.nombre} {p.apellido}
@@ -159,6 +167,11 @@ function Pacientes() {
             )}
           </TableBody>
         </Table>
+        <TablePager
+          page={page}
+          count={totalPages}
+          onChange={(p) => setPage(p)}
+        />
       </TableContainer>
     </>
   );

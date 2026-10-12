@@ -34,6 +34,7 @@ namespace Backend.Infrastructure
             services.AddScoped<IMetricaRepository, MetricaRepository>();
             services.AddScoped<IResultadoRepository, ResultadoRepository>();
             services.AddScoped<IInformeRepository, InformeRepository>();
+            services.AddScoped<ITipoEjercicioQueries, TipoEjercicioQueries>();
 
             return services;
         }

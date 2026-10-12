@@ -8,7 +8,6 @@ namespace Backend.Api.Controllers
     [Route("api/tipos-dificultad")]
     public class TipoDificultadController(ITipoDificultadQueries queries) : Controller
     {
-        /// <summary>Catálogo de tipos de dificultad, para el filtro de la lista y el alta de pacientes.</summary>
         [HttpGet]
         [ProducesResponseType<IReadOnlyList<TipoDificultadDto>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll(CancellationToken ct)

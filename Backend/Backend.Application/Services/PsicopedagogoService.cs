@@ -10,7 +10,6 @@ namespace Backend.Application.Services
     public class PsicopedagogoService(
         IPsicopedagogoRepository repository,
         IPasswordHasher contraseniaHasher,
-        //IUsuarioActual usuarioActual,
         ILogger<PsicopedagogoService> logger): IPsicopedagogoService
     {
         public async Task<Result<PsicopedagogoDto>> CreatepsicopedagogoAsync(CreatePsicopedagogoRequest request, CancellationToken ct = default)

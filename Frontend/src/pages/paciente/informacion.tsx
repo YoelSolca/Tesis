@@ -1,13 +1,11 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Link as RouterLink, useParams } from "react-router-dom";
-import { PacienteDetalle } from "../../PacienteDetalle.model";
+import { Dispatch, SetStateAction, useState } from "react";
 import {
-  KeyValue,
-  PatientHeader,
-  PatientTabs,
-  SectionHeader,
-} from "../../components/common";
-import AddIcon from "@mui/icons-material/Add";
+  Link as RouterLink,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
+import { PacienteDetalle } from "../../Model/PacienteDetalle.model";
+import { KeyValue, SectionHeader } from "../../components/common";
 import {
   Box,
   Button,
@@ -26,25 +24,23 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import dayjs from "dayjs";
-import {
-  guardarCambiosPaciente,
-  obtenerPacientePorId,
-} from "../../actions/pacientes.action";
+import { guardarCambiosPaciente } from "../../actions/pacientes.action";
 
 function DatosPersonales({
-  paciente,
   editing,
   form,
   setForm,
   onEdit,
 }: {
-  paciente: PacienteDetalle;
   form: PacienteDetalle | null;
   setForm: Dispatch<SetStateAction<PacienteDetalle | null>>;
   editing: boolean;
   onClose: () => void;
   onEdit: () => void;
 }) {
+  // en Informacion.tsx o Historial.tsx
+  const { paciente } = useOutletContext<{ paciente: PacienteDetalle }>();
+
   if (!editing) {
     return (
       <Card className="p-6 h-full flex flex-col gap-5">
@@ -211,24 +207,20 @@ function DatosPersonales({
 
 export default function Informacion() {
   const [form, setForm] = useState<PacienteDetalle | null>(null);
-  const [paciente, setPaciente] = useState<PacienteDetalle | null>(null);
+  // en Informacion.tsx o Historial.tsx
+  const { paciente, setPaciente } = useOutletContext<{
+    paciente: PacienteDetalle | null;
+    setPaciente: React.Dispatch<React.SetStateAction<PacienteDetalle | null>>;
+  }>();
   const { id } = useParams();
   const [editing, setEditing] = useState(false);
 
-  const token = "";
-
-  useEffect(() => {
-    obtenerPacientePorId(token, id!)
-      .then((data) => {
-        setPaciente(data);
-      })
-      .catch(console.error);
-  }, []);
+  const token = import.meta.env.VITE_TOKEN_DEV;
 
   async function guardarCambios() {
     if (form) {
       guardarCambiosPaciente(token, id!, form)
-        .then((response) => {
+        .then(() => {
           setPaciente(form); // Actualiza el estado del paciente con los datos del formulario
           setEditing(false);
         })
@@ -244,26 +236,10 @@ export default function Informacion() {
 
   return (
     <>
-      <PatientHeader
-        patient={paciente}
-        action={
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            component={RouterLink}
-            to={`/sesiones/nueva/ejercicios/${paciente.id}`}
-          >
-            Nueva sesión
-          </Button>
-        }
-      />
-
-      <PatientTabs value={0} />
-
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, lg: "grow" }}>
           <DatosPersonales
-            paciente={paciente}
+            // paciente={paciente}
             editing={editing}
             onEdit={() => {
               setEditing(true);

@@ -4,11 +4,6 @@ using Backend.Application.Interfaces;
 using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Backend.Application.Services
 {
@@ -35,6 +30,20 @@ namespace Backend.Application.Services
 
             return Result<PagedResponse<PacienteListItemDto>>.Success(
                 await queries.GetPacientesAsync(psicopedagogoId, search, tipoDificultadId, page, pageSize, ct));
+        }
+
+        public async Task<Result<PagedResponse<PacienteHistorialItemDto>>> GetHistorialAsync(int pacienteId, int? tipoEjercicioId, DateTime? fecha, int page, int pageSize, CancellationToken ct = default)
+        {
+            if (usuarioActual.PsicopedagogoId is not int psicopedagogoId)
+            {
+                return Result<PagedResponse<PacienteHistorialItemDto>>.Failure("No hay una sesión activa.", ErrorCodes.Unauthorized);
+            }
+
+            page = Math.Max(page, 1);
+            pageSize = Math.Clamp(pageSize, 1, MaxPageSize);
+
+            return Result<PagedResponse<PacienteHistorialItemDto>>.Success(
+                await queries.GetHistorialAsync(pacienteId, psicopedagogoId, tipoEjercicioId, fecha, page, pageSize, ct));
         }
 
         public async Task<Result<PacienteDetalleDto>> GetDetalleAsync(int pacienteId, CancellationToken ct = default)
@@ -214,5 +223,6 @@ namespace Backend.Application.Services
                 await repository.ReactivarAtencionAsync(pacienteId, psicopedagogoId, ct);
             }
         }
+
     }
 }

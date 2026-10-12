@@ -1,6 +1,4 @@
-﻿using Backend.Domain.Entities;
-
-namespace Backend.Domain.Interfaces
+﻿namespace Backend.Domain.Interfaces
 {
     public interface IPersonaRepository
     {

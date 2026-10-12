@@ -27,9 +27,7 @@ namespace Backend.Api.Controllers
             var result = await sesionService.GetByIdAsync(id, psicopedagogoId);
 
             return result.IsSuccess ? Ok(result) : ToError(result.Error, result.ErrorCode);
-
         }
-
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]

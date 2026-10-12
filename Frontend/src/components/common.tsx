@@ -1,8 +1,12 @@
-import { Stack, Box, Typography, Card, Tabs, Tab, Avatar } from "@mui/material";
+import { Stack, Box, Typography, Avatar, Pagination } from "@mui/material";
 import React from "react";
-import { PacienteDetalle } from "../PacienteDetalle.model";
-import { formatearEdad } from "../utils/edad";
-
+import TrackChangesIcon from "@mui/icons-material/TrackChanges";
+import memoriaIcon from "../assets/icons/memoria.png";
+import calculoIcon from "../assets/icons/calculo.png";
+import DrawIcon from "@mui/icons-material/Draw";
+import AutoStoriesOutlinedIcon from "@mui/icons-material/AutoStoriesOutlined";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 export function PersonAvatar({
   initials,
   size = 40,
@@ -60,57 +64,6 @@ export function PageHeader({
   );
 }
 
-// este componente se encarga de mostrar la cabecera de la página de pacientes
-export function PatientHeader({
-  patient,
-  action,
-}: {
-  patient: PacienteDetalle;
-  action?: React.ReactNode;
-}) {
-  return (
-    <Card className="p-6" key={patient.id}>
-      <Stack
-        direction="row"
-        useFlexGap
-        className="gap-4 flex-wrap items-center"
-      >
-        <PersonAvatar
-          initials={patient.nombre.charAt(0) + patient.apellido.charAt(0)}
-          size={56}
-        />
-        <Box className="flex-1 min-w-40">
-          <Typography variant="h5" component="h1">
-            {patient.nombre} {patient.apellido}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {formatearEdad(patient.fechaNacimiento)} · DNI{" "}
-            {Number(patient.documento).toLocaleString("es-AR")}
-          </Typography>
-        </Box>
-        {action}
-      </Stack>
-    </Card>
-  );
-}
-
-const PATIENT_TABS = ["Información", "Historial", "Evolución", "Informes"];
-
-export function PatientTabs({ value }: { value: number }) {
-  return (
-    <Tabs
-      value={value}
-      variant="scrollable"
-      allowScrollButtonsMobile
-      sx={{ borderBottom: 1, borderColor: "divider" }}
-    >
-      {PATIENT_TABS.map((t, i) => (
-        <Tab key={i} label={t} />
-      ))}
-    </Tabs>
-  );
-}
-
 export function SectionHeader({
   title,
   subtitle,
@@ -145,5 +98,122 @@ export function KeyValue({ label, value }: { label: string; value: string }) {
       </Typography>
       <Typography variant="body1">{value}</Typography>
     </Box>
+  );
+}
+
+const TYPE_ICONS: Record<string, React.ElementType | string> = {
+  Atención: TrackChangesIcon,
+  Memoria: memoriaIcon,
+  Lectura: AutoStoriesOutlinedIcon,
+  Escritura: DrawIcon,
+  Cálculo: calculoIcon,
+};
+
+export function IconBox({
+  icon,
+  size,
+}: {
+  icon: React.ElementType | string;
+  size: number;
+}) {
+  return (
+    <Box
+      className="rounded-lg grid place-items-center shrink-0"
+      sx={{
+        width: size,
+        height: size,
+        bgcolor: "rgba(37, 99, 235, 0.08)",
+        color: "primary.main",
+      }}
+    >
+      {typeof icon === "string" ? (
+        <Box
+          component="img"
+          src={icon}
+          alt=""
+          className="w-[62%] h-[62%] object-contain"
+        />
+      ) : (
+        React.createElement(icon)
+      )}
+    </Box>
+  );
+}
+
+export function ExerciseTypeIcon({
+  icon,
+  size,
+}: {
+  icon: string;
+  size: number;
+}) {
+  return <IconBox icon={TYPE_ICONS[icon] ?? TrackChangesIcon} size={size} />;
+}
+
+export function TablePager({
+  page,
+  count,
+  onChange,
+}: {
+  page: number;
+  count: number;
+  onChange: (p: number) => void;
+}) {
+  return (
+    <Stack direction="row" className="justify-end">
+      <Pagination
+        count={count}
+        page={page}
+        onChange={(_, value) => onChange(value)}
+        color="primary"
+      />
+    </Stack>
+  );
+}
+
+export function CenteredPagination({
+  page,
+  count,
+  onChange,
+}: {
+  page: number;
+  count: number;
+  onChange: (p: number) => void;
+}) {
+  return (
+    <Stack direction="row" className="center">
+      <Pagination
+        count={count}
+        page={page}
+        onChange={(_, value) => onChange(value)}
+        color="primary"
+      />
+    </Stack>
+  );
+}
+
+export function DateFilter({
+  onChange,
+  date,
+  label = "Filtrar por fecha",
+  width = 220,
+}: {
+  onChange: (date: Date | undefined) => void;
+  date?: Date;
+  label?: string;
+  width?: number;
+}) {
+  return (
+    <DatePicker
+      label={label}
+      value={date ? dayjs(date) : null}
+      sx={{
+        width: { xs: "100%", sm: width },
+        bgcolor: "background.paper",
+      }}
+      format="DD/MM/YYYY"
+      slotProps={{ field: { clearable: true }, textField: { size: "small" } }}
+      onChange={(d) => onChange(d?.toDate())} // null → undefined, sin ?? new Date()
+    />
   );
 }

@@ -1,9 +1,7 @@
-﻿using Azure.Core;
-using Backend.Application.Common;
+﻿using Backend.Application.Common;
 using Backend.Application.DTO;
 using Backend.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Api.Controllers
@@ -33,7 +31,7 @@ namespace Backend.Api.Controllers
         [HttpPut("{psicopedagogoId:int}")]
         [ProducesResponseType<PsicopedagogoDto>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateAsync(int psicopedagogoId, UpsertPsicopedagogoRequest request ,CancellationToken ct)
+        public async Task<IActionResult> UpdateAsync(int psicopedagogoId, UpsertPsicopedagogoRequest request, CancellationToken ct)
         {
             var result = await psicopedagogoService.UpdateAsync(psicopedagogoId, request, ct);
             return result.IsSuccess ? Ok(result.Value) : ToError(result.Error, result.ErrorCode);

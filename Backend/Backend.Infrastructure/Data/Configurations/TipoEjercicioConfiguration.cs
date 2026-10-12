@@ -11,7 +11,6 @@ namespace Backend.Infrastructure.Data.Configurations
             builder.ToTable("TipoEjercicio");
             builder.HasKey(t => t.Id);
 
-            // El valor de icono es un marcador: hoy el Front elige el ícono por nombre de tipo.
             builder.HasData(
                 new TipoEjercicio { Id = 1, Nombre = "Atención", icono = "atencion" },
                 new TipoEjercicio { Id = 2, Nombre = "Memoria", icono = "memoria" },

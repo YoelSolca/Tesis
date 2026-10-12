@@ -22,8 +22,6 @@ namespace Backend.Infrastructure.Repositories
         public async Task<bool> EmailExistsAsync(string email, CancellationToken ct = default)
         => await context.Usuario.AsNoTracking().AnyAsync(u => u.CorreoElectronico == email, ct);
 
-
-
         public async Task UpdateUsuariopAsync(int psicopedagogoId, string token, DateTime ExpiresAt, CancellationToken ct = default)
         {
             var existingPsicopedagogo = await context.Usuario.FirstOrDefaultAsync(p => p.PsicopedagogoId == psicopedagogoId, ct);

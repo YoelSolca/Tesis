@@ -12,7 +12,6 @@ namespace Backend.Infrastructure.Security
     public class JwtTokenGenerator(IOptions<JwtOptions> options) : ITokenGenerator
     {
         public const string PsicopedagogoClaim = "psicopedagogoId";
-
         private readonly JwtOptions _options = options.Value;
 
         public (string Token, DateTime ExpiresAt) Generate(Usuario user)
@@ -40,7 +39,7 @@ namespace Backend.Infrastructure.Security
 
         public (string Token, DateTime ExpiresAt) GenerateResetToken()
         {
-           var tokenData = RandomNumberGenerator.GetBytes(32);
+            var tokenData = RandomNumberGenerator.GetBytes(32);
             var token = Convert.ToBase64String(tokenData);
             var expiresAt = DateTime.Now.AddDays(_options.ResetTokenExpirationDays);
             return (token, expiresAt);

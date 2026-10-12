@@ -29,5 +29,31 @@ export interface TipoDificultad {
   nombre: string;
 }
 
+export interface TipoEjercicio {
+  id: number;
+  nombre: string;
+}
+
 
 export type PacientesResponse = PagedResponse<PacienteListItem>;
+export type HistorialPacienteResponse = PagedResponse<HistorialPacienteItem>;
+
+export interface HistorialPacienteItem {
+  sesionId:       number;
+  ejercicioId:    number;
+  fecha:          Date;
+  tipoEjercicio:  string;
+  ejercicio:      string;
+  icono:          string;
+  aciertos:       number;
+  errores:        number;
+  tiempoSegundos: number;
+  observaciones:  string;
+  metricas:       Metrica[];
+}
+
+export interface Metrica {
+  nombre: string;
+  valor:  number;
+  unidad: null;
+}

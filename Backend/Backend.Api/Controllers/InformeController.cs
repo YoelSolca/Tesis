@@ -1,12 +1,10 @@
 using Backend.Application.Common;
 using Backend.Application.DTO;
 using Backend.Application.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Api.Controllers
 {
-    [AllowAnonymous]
     [ApiController]
     [Route("api/informes")]
     public class InformeController(IInformeService informeService) : Controller

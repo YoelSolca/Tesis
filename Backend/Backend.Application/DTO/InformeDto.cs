@@ -16,7 +16,6 @@ public record InformeDto(
         i.Id, i.PacienteId, i.PsicopedagogoId, i.FechaGeneracion, i.PeriodoDesde, i.PeriodoHasta, i.Contenido);
 }
 
-/// <summary>Pide generar un informe de IA para el paciente, resumiendo el período indicado.</summary>
 public record CreateInformeRequest(
     [Required] int PsicopedagogoId,
     [Required] DateTime PeriodoDesde,
