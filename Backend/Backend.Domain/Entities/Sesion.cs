@@ -7,6 +7,7 @@ namespace Backend.Domain.Entities
         public int PacienteId { get; set; }
         public PsicopedagogoPaciente PsicopedagogoPaciente { get; set; } = null!;
         public DateTime Fecha { get; set; }
+        public EstadoSesion Estado { get; set; } = EstadoSesion.Planificada;
         public ICollection<SesionEjercicio> SesionEjercicios { get; set; } = new List<SesionEjercicio>();
     }
 }

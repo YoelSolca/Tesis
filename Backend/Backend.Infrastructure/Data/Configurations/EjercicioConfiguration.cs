@@ -13,6 +13,7 @@ namespace Backend.Infrastructure.Data.Configurations
             builder.ToTable("Ejercicio");
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Nombre).IsRequired().HasMaxLength(100);
+            builder.Property(e => e.Descripcion).HasMaxLength(300);
 
             builder.HasOne(e => e.TipoEjercicio)
                     .WithMany(p => p.Ejercicios)

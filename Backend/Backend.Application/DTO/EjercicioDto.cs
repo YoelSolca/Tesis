@@ -6,3 +6,11 @@ public record EjercicioDto(int id, string nombre, string tipoEjercicio)
 {
     public static EjercicioDto FromEntity(Ejercicio e) => new(e.Id, e.Nombre, e.TipoEjercicio.Nombre);
 }
+
+
+
+
+public record EjercicioSearchCriteria(
+    int? tipoEjercicioId,
+    int Page = 1,
+    int PageSize = 6);

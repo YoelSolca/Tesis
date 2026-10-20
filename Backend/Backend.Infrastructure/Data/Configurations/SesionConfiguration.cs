@@ -11,6 +11,7 @@ namespace Backend.Infrastructure.Data.Configurations
 
             builder.HasKey(s => s.Id);
             builder.Property(s => s.Fecha);
+            builder.Property(s => s.Estado).IsRequired().HasConversion<string>().HasMaxLength(20);
 
             // Restrict: el historial no debe desaparecer en silencio al borrar un vínculo o un paciente.
             builder.HasOne(s => s.PsicopedagogoPaciente)

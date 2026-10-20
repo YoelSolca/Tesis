@@ -28,7 +28,7 @@ namespace Backend.Infrastructure.Security
             audience: _options.Audience,
             claims:
             [
-                new Claim(PsicopedagogoClaim, user.PsicopedagogoId.ToString()),
+                new Claim(PsicopedagogoClaim, user.PersonaId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.CorreoElectronico)
             ],
             expires: expiresAt,

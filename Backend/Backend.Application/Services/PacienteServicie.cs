@@ -46,6 +46,20 @@ namespace Backend.Application.Services
                 await queries.GetHistorialAsync(pacienteId, psicopedagogoId, tipoEjercicioId, fecha, page, pageSize, ct));
         }
 
+        public async Task<Result<PagedResponse<PacienteInformeItemDto>>> GetInformesAsync(int pacienteId, DateTime? fecha, int page, int pageSize, CancellationToken ct = default)
+        {
+            if (usuarioActual.PsicopedagogoId is not int psicopedagogoId)
+            {
+                return Result<PagedResponse<PacienteInformeItemDto>>.Failure("No hay una sesión activa.", ErrorCodes.Unauthorized);
+            }
+
+            page = Math.Max(page, 1);
+            pageSize = Math.Clamp(pageSize, 1, MaxPageSize);
+
+            return Result<PagedResponse<PacienteInformeItemDto>>.Success(
+                await queries.GetInformesAsync(pacienteId, psicopedagogoId, fecha, page, pageSize, ct));
+        }
+
         public async Task<Result<PacienteDetalleDto>> GetDetalleAsync(int pacienteId, CancellationToken ct = default)
         {
             if (usuarioActual.PsicopedagogoId is not int psicopedagogoId)
@@ -106,7 +120,6 @@ namespace Backend.Application.Services
                 {
                     Nombre = request.Nombre,
                     Apellido = request.Apellido,
-                    Telefono = request.Telefono,
                     Documento = request.Documento,
                     Genero = request.Genero,
                     FechaNacimiento = request.FechaNacimiento
@@ -186,7 +199,6 @@ namespace Backend.Application.Services
             paciente.Direccion = request.Direccion;
             paciente.Persona.Nombre = request.Nombre;
             paciente.Persona.Apellido = request.Apellido;
-            paciente.Persona.Telefono = request.Telefono;
             paciente.Persona.Documento = request.Documento;
             paciente.Persona.Genero = request.Genero;
             paciente.Persona.FechaNacimiento = request.FechaNacimiento;

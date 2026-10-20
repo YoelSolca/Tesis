@@ -12,6 +12,7 @@ namespace Backend.Infrastructure.Data.Configurations
             builder.ToTable("SesionEjercicio");
 
             builder.HasKey(x => new { x.SesionId, x.EjercicioId });
+            builder.Property(x => x.Orden).IsRequired();
 
             builder.HasOne(x => x.Sesion)
                 .WithMany(x => x.SesionEjercicios)

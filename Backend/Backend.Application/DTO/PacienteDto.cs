@@ -17,7 +17,7 @@ public record TipoEjercicioDto (int Id, string Nombre);
 
 public record PacienteDetalleDto(
     int Id, string Nombre, string Apellido, string Documento, DateOnly FechaNacimiento,
-    string Telefono, string Direccion, string Genero,
+    string Direccion, string Genero,
     string? Objetivo, string? Observaciones, IReadOnlyList<TipoDificultadDto> TiposDificultad, UltimaSesionDto? UltimaSesion);
 
 public record PacienteHistorialItemDto(
@@ -27,6 +27,10 @@ public record PacienteHistorialItemDto(
     string? Observaciones,
     IReadOnlyList<MetricaValorDto> Metricas);
 
+public record PacienteInformeItemDto(
+    int Id, int PacienteId, DateTime FechaGeneracion, 
+    int PsicopedagogoId,
+     string contenido, DateTime PeriodoDesde, DateTime PeriodoHasta);
 public record MetricaValorDto(string Nombre, decimal Valor, string? Unidad);
 
 
@@ -41,7 +45,6 @@ public record CreatePacienteRequest(
     [Required, StringLength(50)] string Direccion,
     [Required, StringLength(100)] string Nombre,
     [StringLength(100)] string Apellido,
-    [StringLength(20)] string Telefono,
     [StringLength(20)] string Documento,
     [StringLength(1)] string Genero,
     DateOnly FechaNacimiento,
@@ -54,7 +57,6 @@ public record UpsertPacienteRequest(
     [Required, StringLength(50)] string Direccion,
     [Required, StringLength(100)] string Nombre,
     [StringLength(100)] string Apellido,
-    [StringLength(20)] string Telefono,
     [StringLength(20)] string Documento,
     [StringLength(1)] string Genero,
     DateOnly FechaNacimiento,

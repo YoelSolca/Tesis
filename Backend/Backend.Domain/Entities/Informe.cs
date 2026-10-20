@@ -10,6 +10,7 @@ namespace Backend.Domain.Entities
         public DateTime FechaGeneracion { get; set; }
         public DateTime PeriodoDesde { get; set; }
         public DateTime PeriodoHasta { get; set; }
+        public string Resumen { get; set; } = string.Empty;
         public string Contenido { get; set; } = string.Empty;
     }
 }

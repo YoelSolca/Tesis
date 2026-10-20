@@ -17,20 +17,21 @@ namespace Backend.Application.Services
             var psicopedagogo = new Psicopedagogo
             {
                 Avatar = request.Avatar,
+                Telefono = request.Telefono,
                 Persona = new Persona
                 {
                     Nombre = request.Nombre,
                     Apellido = request.Apellido,
-                    Telefono = request.Telefono,
                     Documento = request.Documento,
                     Genero = request.Genero,
-                    FechaNacimiento = request.FechaNacimiento
-                },
-                Usuario = new Usuario
-                {
-                    CorreoElectronico = request.CorreoElectronico,
-                    Contrasenia = contraseniaHasher.Hash(request.Contrasenia),
-                    FechaAlta = DateTime.Now,
+                    FechaNacimiento = request.FechaNacimiento,
+                    Usuario = new Usuario
+                    {
+                        CorreoElectronico = request.CorreoElectronico,
+                        Contrasenia = contraseniaHasher.Hash(request.Contrasenia),
+                        FechaAlta = DateTime.Now,
+                        // Rol y Estado toman sus valores por defecto: Psicopedagogo y Pendiente de aprobación.
+                    }
                 }
             };
 
@@ -62,10 +63,13 @@ namespace Backend.Application.Services
                 PersonaId = psicopedagogoId,
                 Avatar = request.Avatar,
 
-                Usuario = new Usuario
+                Persona = new Persona
                 {
-                    CorreoElectronico = request.CorreoElectronico,
-                    Contrasenia = contraseniaHasher.Hash(request.Contrasenia)
+                    Usuario = new Usuario
+                    {
+                        CorreoElectronico = request.CorreoElectronico,
+                        Contrasenia = contraseniaHasher.Hash(request.Contrasenia)
+                    }
                 }
             };
 

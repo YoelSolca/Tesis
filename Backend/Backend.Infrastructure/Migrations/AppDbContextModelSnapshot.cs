@@ -22,6 +22,16 @@ namespace Backend.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Backend.Domain.Entities.Administrador", b =>
+                {
+                    b.Property<int>("PersonaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PersonaId");
+
+                    b.ToTable("Administrador", (string)null);
+                });
+
             modelBuilder.Entity("Backend.Domain.Entities.Ejercicio", b =>
                 {
                     b.Property<int>("Id")
@@ -29,6 +39,10 @@ namespace Backend.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -107,6 +121,46 @@ namespace Backend.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Backend.Domain.Entities.HistorialEstadoCuenta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AdministradorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EstadoAnterior")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("EstadoNuevo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Motivo")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdministradorId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("HistorialEstadoCuenta", (string)null);
+                });
+
             modelBuilder.Entity("Backend.Domain.Entities.Informe", b =>
                 {
                     b.Property<int>("Id")
@@ -133,6 +187,11 @@ namespace Backend.Infrastructure.Migrations
 
                     b.Property<int>("PsicopedagogoId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Resumen")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("Id");
 
@@ -272,11 +331,10 @@ namespace Backend.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<DateOnly>("FechaNacimiento")
+                    b.Property<DateOnly?>("FechaNacimiento")
                         .HasColumnType("date");
 
                     b.Property<string>("Genero")
-                        .IsRequired()
                         .HasMaxLength(1)
                         .HasColumnType("nvarchar(1)");
 
@@ -284,11 +342,6 @@ namespace Backend.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Telefono")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -304,11 +357,23 @@ namespace Backend.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Avatar")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<string>("Matricula")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.HasKey("PersonaId");
+
+                    b.HasIndex("Matricula")
+                        .IsUnique();
 
                     b.ToTable("Psicopedagogo", (string)null);
                 });
@@ -399,6 +464,11 @@ namespace Backend.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
@@ -421,6 +491,9 @@ namespace Backend.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("EjercicioId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Orden")
                         .HasColumnType("int");
 
                     b.HasKey("SesionId", "EjercicioId");
@@ -528,8 +601,11 @@ namespace Backend.Infrastructure.Migrations
 
             modelBuilder.Entity("Backend.Domain.Entities.Usuario", b =>
                 {
-                    b.Property<int>("PsicopedagogoId")
+                    b.Property<int>("PersonaId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("AceptoTerminos")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Contrasenia")
                         .IsRequired()
@@ -541,6 +617,19 @@ namespace Backend.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool>("DobleFactorHabilitado")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("FechaAceptacionTerminos")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("FechaAlta")
                         .HasColumnType("datetime2");
 
@@ -550,12 +639,40 @@ namespace Backend.Infrastructure.Migrations
                     b.Property<DateTime>("FechaRecuperacion")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("FechaSolicitud")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Rol")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("SecretoDobleFactor")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("TokenRestablecimiento")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("PsicopedagogoId");
+                    b.HasKey("PersonaId");
+
+                    b.HasIndex("CorreoElectronico")
+                        .IsUnique();
+
+                    b.HasIndex("Estado");
 
                     b.ToTable("Usuario", (string)null);
+                });
+
+            modelBuilder.Entity("Backend.Domain.Entities.Administrador", b =>
+                {
+                    b.HasOne("Backend.Domain.Entities.Persona", "Persona")
+                        .WithOne("Administrador")
+                        .HasForeignKey("Backend.Domain.Entities.Administrador", "PersonaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Persona");
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Ejercicio", b =>
@@ -567,6 +684,25 @@ namespace Backend.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("TipoEjercicio");
+                });
+
+            modelBuilder.Entity("Backend.Domain.Entities.HistorialEstadoCuenta", b =>
+                {
+                    b.HasOne("Backend.Domain.Entities.Administrador", "Administrador")
+                        .WithMany("CambiosRealizados")
+                        .HasForeignKey("AdministradorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Domain.Entities.Usuario", "Usuario")
+                        .WithMany("Historial")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Administrador");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Informe", b =>
@@ -718,13 +854,18 @@ namespace Backend.Infrastructure.Migrations
 
             modelBuilder.Entity("Backend.Domain.Entities.Usuario", b =>
                 {
-                    b.HasOne("Backend.Domain.Entities.Psicopedagogo", "Psicopedagogo")
+                    b.HasOne("Backend.Domain.Entities.Persona", "Persona")
                         .WithOne("Usuario")
-                        .HasForeignKey("Backend.Domain.Entities.Usuario", "PsicopedagogoId")
+                        .HasForeignKey("Backend.Domain.Entities.Usuario", "PersonaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Psicopedagogo");
+                    b.Navigation("Persona");
+                });
+
+            modelBuilder.Entity("Backend.Domain.Entities.Administrador", b =>
+                {
+                    b.Navigation("CambiosRealizados");
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Ejercicio", b =>
@@ -751,19 +892,22 @@ namespace Backend.Infrastructure.Migrations
 
             modelBuilder.Entity("Backend.Domain.Entities.Persona", b =>
                 {
+                    b.Navigation("Administrador")
+                        .IsRequired();
+
                     b.Navigation("Paciente")
                         .IsRequired();
 
                     b.Navigation("Psicopedagogo")
+                        .IsRequired();
+
+                    b.Navigation("Usuario")
                         .IsRequired();
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.Psicopedagogo", b =>
                 {
                     b.Navigation("PsicopedagogoPacientes");
-
-                    b.Navigation("Usuario")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Backend.Domain.Entities.PsicopedagogoPaciente", b =>
@@ -794,6 +938,11 @@ namespace Backend.Infrastructure.Migrations
             modelBuilder.Entity("Backend.Domain.Entities.TipoEjercicio", b =>
                 {
                     b.Navigation("Ejercicios");
+                });
+
+            modelBuilder.Entity("Backend.Domain.Entities.Usuario", b =>
+                {
+                    b.Navigation("Historial");
                 });
 #pragma warning restore 612, 618
         }

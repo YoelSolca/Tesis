@@ -9,6 +9,8 @@ namespace Backend.Infrastructure.Data
         public DbSet<Psicopedagogo> Psicopedagogo => Set<Psicopedagogo>();
         public DbSet<Paciente> Paciente => Set<Paciente>();
         public DbSet<Usuario> Usuario => Set<Usuario>();
+        public DbSet<Administrador> Administrador => Set<Administrador>();
+        public DbSet<HistorialEstadoCuenta> HistorialEstadoCuenta => Set<HistorialEstadoCuenta>();
         public DbSet<Ejercicio> Ejercicio => Set<Ejercicio>();
         public DbSet<TipoEjercicio> TipoEjercicio => Set<TipoEjercicio>();
         public DbSet<Intervencion> Intervencion => Set<Intervencion>();

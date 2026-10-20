@@ -1,4 +1,4 @@
-﻿using Backend.Domain.Entities;
+using Backend.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,7 +10,7 @@ namespace Backend.Infrastructure.Data.Configurations
         {
             builder.ToTable("Usuario");
 
-            builder.HasKey(u => u.PsicopedagogoId);
+            builder.HasKey(u => u.PersonaId);
             builder.Property(u => u.CorreoElectronico)
                 .IsRequired()
                 .HasMaxLength(50);
@@ -22,9 +22,33 @@ namespace Backend.Infrastructure.Data.Configurations
             builder.Property(u => u.FechaExpiracionTokenRestablecimiento);
             builder.Property(u => u.FechaRecuperacion);
 
-            builder.HasOne(p => p.Psicopedagogo)
-                  .WithOne(ps => ps.Usuario)
-                  .HasForeignKey<Usuario>(p => p.PsicopedagogoId)
+            builder.Property(u => u.SecretoDobleFactor)
+                .HasMaxLength(100);
+
+            builder.Property(u => u.DobleFactorHabilitado)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            // Los enums se guardan como texto para que la base sea legible.
+            builder.Property(u => u.Rol)
+                .IsRequired()
+                .HasConversion<string>()
+                .HasMaxLength(20);
+
+            builder.Property(u => u.Estado)
+                .IsRequired()
+                .HasConversion<string>()
+                .HasMaxLength(20);
+
+            builder.Property(u => u.FechaSolicitud).IsRequired();
+            builder.Property(u => u.AceptoTerminos).IsRequired();
+
+            builder.HasIndex(u => u.CorreoElectronico).IsUnique();
+            builder.HasIndex(u => u.Estado);
+
+            builder.HasOne(u => u.Persona)
+                  .WithOne(p => p.Usuario)
+                  .HasForeignKey<Usuario>(u => u.PersonaId)
                   .OnDelete(DeleteBehavior.Cascade);
         }
     }

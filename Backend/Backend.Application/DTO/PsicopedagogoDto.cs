@@ -10,7 +10,7 @@ namespace Backend.Application.DTO;
 
 public record PsicopedagogoDto(int PersonaId, string CorreoElectronico, string Contrasenia, string? Avatar, DateTime FechaAlta)
 {
-    public static PsicopedagogoDto FromEntity(Psicopedagogo p) => new(p.PersonaId, p.Usuario.CorreoElectronico,p.Usuario.Contrasenia, p.Avatar, p.Usuario.FechaAlta);
+    public static PsicopedagogoDto FromEntity(Psicopedagogo p) => new(p.PersonaId, p.Persona.Usuario.CorreoElectronico,p.Persona.Usuario.Contrasenia, p.Avatar, p.Persona.Usuario.FechaAlta);
 }
 
 public record CreatePsicopedagogoRequest(

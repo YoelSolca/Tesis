@@ -22,9 +22,9 @@ namespace Backend.Application.Services
 
             var (token, expiresAt) = tokenGenerator.Generate(usuario);
 
-            logger.LogInformation("Psicopedagogo{PsicopedagogoId} logueado ", usuario.PsicopedagogoId);
+            logger.LogInformation("Psicopedagogo{PsicopedagogoId} logueado ", usuario.PersonaId);
 
-            return Result<LoginResponse>.Success(new LoginResponse(token, expiresAt, usuario.PsicopedagogoId, usuario.Psicopedagogo.Persona.Nombre));
+            return Result<LoginResponse>.Success(new LoginResponse(token, expiresAt, usuario.PersonaId, usuario.Persona.Nombre));
         }
 
         public async Task<Result<ForgotPasswordRequest>> ForgotPasswordAsync(string correoElectronico, CancellationToken ct = default)
@@ -36,11 +36,11 @@ namespace Backend.Application.Services
 
             var (token, expiresAt) = tokenGenerator.GenerateResetToken();
 
-            await usuarioRepository.UpdateUsuariopAsync(existing.PsicopedagogoId, token, expiresAt, ct);
+            await usuarioRepository.UpdateUsuariopAsync(existing.PersonaId, token, expiresAt, ct);
 
             await usuarioRepository.sendEmail(correoElectronico, ct);
 
-            logger.LogInformation("Contraseña restablecida para el usuario {PsicopedagogoId}", existing.PsicopedagogoId);
+            logger.LogInformation("Contraseña restablecida para el usuario {PsicopedagogoId}", existing.PersonaId);
 
             return Result<ForgotPasswordRequest>.Success(new ForgotPasswordRequest(token, expiresAt));
         }

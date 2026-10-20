@@ -29,13 +29,25 @@ namespace Backend.Infrastructure.Data
             var psico = new Psicopedagogo
             {
                 Avatar = "avatar-demo.png",
-                Persona = NuevaPersona("Laura", "Gómez", "3515551234", DocumentoPsicopedagogo, "F", new DateOnly(1985, 3, 14)),
-                Usuario = new Usuario { CorreoElectronico = "psico@demo.com", Contrasenia = hasher.Hash("Demo1234!"), FechaAlta = ahora }
+                Telefono = "3515551234",
+                Matricula = "MP 1234",
+                Persona = NuevaPersona("Laura", "Gómez", DocumentoPsicopedagogo, "F", new DateOnly(1985, 3, 14))
+            };
+            psico.Persona.Usuario = new Usuario
+            {
+                CorreoElectronico = "psico@demo.com",
+                Contrasenia = hasher.Hash("Demo1234!"),
+                FechaAlta = ahora,
+                Rol = RolUsuario.Psicopedagogo,
+                Estado = EstadoCuenta.Aprobado,
+                FechaSolicitud = ahora,
+                AceptoTerminos = true,
+                FechaAceptacionTerminos = ahora
             };
 
-            var juan = NuevoPaciente("Juan", "Perez", "351 45889533", "56058870", "M", new DateOnly(2018, 5, 12), "Av. Colón 559", ahora);
-            var melina = NuevoPaciente("Melina", "Romero", "351 4112233", "65221087", "F", new DateOnly(2019, 8, 3), "Bv. San Juan 1020", ahora);
-            var cristian = NuevoPaciente("Cristian", "Sosa", "351 4556677", "54576522", "M", new DateOnly(2018, 2, 20), "Obispo Trejo 340", ahora);
+            var juan = NuevoPaciente("Juan", "Perez", "56058870", "M", new DateOnly(2018, 5, 12), "Av. Colón 559", ahora);
+            var melina = NuevoPaciente("Melina", "Romero", "65221087", "F", new DateOnly(2019, 8, 3), "Bv. San Juan 1020", ahora);
+            var cristian = NuevoPaciente("Cristian", "Sosa", "54576522", "M", new DateOnly(2018, 2, 20), "Obispo Trejo 340", ahora);
 
             psico.PsicopedagogoPacientes.Add(Vinculo(juan, ahora.AddDays(-30), "Mejorar la lectura comprensiva.",
                 "Buena disposición. Se distrae con estímulos auditivos.", [DifAtencion],
@@ -67,23 +79,22 @@ namespace Backend.Infrastructure.Data
             logger.LogInformation("Datos de desarrollo sembrados (usuario psico@demo.com).");
         }
 
-        private static Persona NuevaPersona(string nombre, string apellido, string telefono, string documento, string genero, DateOnly nacimiento)
+        private static Persona NuevaPersona(string nombre, string apellido, string documento, string genero, DateOnly nacimiento)
             => new()
             {
                 Nombre = nombre,
                 Apellido = apellido,
-                Telefono = telefono,
                 Documento = documento,
                 Genero = genero,
                 FechaNacimiento = nacimiento
             };
 
-        private static Paciente NuevoPaciente(string nombre, string apellido, string telefono, string documento, string genero, DateOnly nacimiento, string direccion, DateTime fechaAlta)
+        private static Paciente NuevoPaciente(string nombre, string apellido, string documento, string genero, DateOnly nacimiento, string direccion, DateTime fechaAlta)
             => new()
             {
                 Direccion = direccion,
                 FechaAlta = fechaAlta,
-                Persona = NuevaPersona(nombre, apellido, telefono, documento, genero, nacimiento)
+                Persona = NuevaPersona(nombre, apellido, documento, genero, nacimiento)
             };
 
         private static PsicopedagogoPaciente Vinculo(Paciente paciente, DateTime fechaInicio, string objetivo, string observaciones, int[] dificultades, params Sesion[] sesiones)

@@ -38,6 +38,16 @@ namespace Backend.Api.Controllers
             return result.IsSuccess ? Ok(result.Value) : ToError(result.Error, result.ErrorCode);
         }
 
+        [HttpGet("{pacienteId:int}/informes")]
+        [ProducesResponseType<PacienteDetalleDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetInformes(int pacienteId, DateTime? Fecha, int page = 1, int pageSize = 2, CancellationToken ct = default)
+        {
+            var result = await pacienteService.GetInformesAsync(pacienteId, Fecha, page, pageSize, ct);
+            return result.IsSuccess ? Ok(result.Value) : ToError(result.Error, result.ErrorCode);
+        }
+
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status200OK)]

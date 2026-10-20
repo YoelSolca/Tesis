@@ -1,9 +1,10 @@
-﻿using Backend.Application.DTO;
+﻿using Backend.Application.Common;
+using Backend.Application.DTO;
 
 namespace Backend.Application.Interfaces
 {
     public interface IEjercicioService 
     {
-        Task<IReadOnlyList<EjercicioDto>> GetAllEjercicioAsync(CancellationToken ct = default);
+        Task<PagedResponse<EjercicioDto>> GetAllEjercicioAsync(EjercicioSearchCriteria criteria, CancellationToken ct = default);
     }
 }

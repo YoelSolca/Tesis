@@ -35,7 +35,7 @@ namespace Backend.Infrastructure.Queries
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(p => new PacienteListItemDto(
-                    p.PersonaId, p.Persona.Nombre, p.Persona.Apellido, p.Persona.Documento, p.Persona.FechaNacimiento,
+                    p.PersonaId, p.Persona.Nombre, p.Persona.Apellido, p.Persona.Documento, p.Persona.FechaNacimiento!.Value,
                     p.PsicopedagogoPacientes
                         .Where(pp => pp.PsicopedagogoId == psicopedagogoId)
                         .SelectMany(pp => pp.Intervencion.TiposDificultad)
@@ -82,6 +82,33 @@ namespace Backend.Infrastructure.Queries
             return new PagedResponse<PacienteHistorialItemDto>(items, total, page, pageSize);
         }
 
+        public async Task<PagedResponse<PacienteInformeItemDto>> GetInformesAsync(int pacienteId, int psicopedagogoId, DateTime? fecha, int page, int pageSize, CancellationToken ct = default)
+        {
+            var query = context.Informe.AsNoTracking()
+                        .Where(i => i.PsicopedagogoId == psicopedagogoId
+                               && i.PacienteId == pacienteId);
+
+            if (fecha is DateTime f)
+                query = query.Where(i => i.FechaGeneracion.Date == f.Date);
+
+            var total = await query.CountAsync(ct);
+
+            var items = await query.OrderByDescending(i => i.FechaGeneracion)
+                       .Skip((page - 1) * pageSize)
+                       .Take(pageSize)
+                       .Select(i => new PacienteInformeItemDto(
+                           i.Id,
+                           i.PacienteId,
+                           i.FechaGeneracion,
+                           i.PsicopedagogoId,
+                           i.Contenido,
+                           i.PeriodoDesde,
+                           i.PeriodoHasta
+                       )).ToListAsync(ct);
+
+            return new PagedResponse<PacienteInformeItemDto>(items, total, page, pageSize);
+        }
+
         public async Task<PacienteDetalleDto?> GetDetalleAsync(int pacienteId, int psicopedagogoId, CancellationToken ct = default)
         {
             var atenciones = context.PsicopedagogoPaciente.AsNoTracking()
@@ -95,7 +122,6 @@ namespace Backend.Infrastructure.Queries
                 x.Paciente.Persona.Apellido,
                 x.Paciente.Persona.Documento,
                 x.Paciente.Persona.FechaNacimiento,
-                x.Paciente.Persona.Telefono,
                 x.Paciente.Persona.Genero,
                 x.Paciente.Direccion,
                 x.Intervencion.objetivo,
@@ -119,7 +145,7 @@ namespace Backend.Infrastructure.Queries
                                                .ToListAsync(ct);
 
             return new PacienteDetalleDto(datos.PacienteId, datos.Nombre, datos.Apellido, datos.Documento,
-                datos.FechaNacimiento, datos.Telefono, datos.Direccion, datos.Genero,
+                datos.FechaNacimiento!.Value, datos.Direccion, datos.Genero!,
                 datos.objetivo, datos.observaciones, dificultades,
                 ultima is null ? null : new UltimaSesionDto(ultima.Id, ultima.Fecha, ultima.Tipos));
         }

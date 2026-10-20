@@ -11,6 +11,7 @@ namespace Backend.Infrastructure.Data.Configurations
             builder.ToTable("Informe");
 
             builder.HasKey(i => i.Id);
+            builder.Property(i => i.Resumen).IsRequired().HasMaxLength(500);
             builder.Property(i => i.Contenido).HasColumnType("nvarchar(max)");
 
             // Restrict: no perder informes ya generados si el paciente se da de baja.

@@ -15,8 +15,7 @@ namespace Backend.Infrastructure.Repositories
 
         public async Task<Usuario?> GetByEmailAsync(string correoElectronico, CancellationToken ct = default)
          => await context.Usuario.AsNoTracking()
-            .Include(x => x.Psicopedagogo)
-            .Include(x => x.Psicopedagogo.Persona)
+            .Include(x => x.Persona)
             .FirstOrDefaultAsync(u => u.CorreoElectronico == correoElectronico, ct);
 
         public async Task<bool> EmailExistsAsync(string email, CancellationToken ct = default)
@@ -24,7 +23,7 @@ namespace Backend.Infrastructure.Repositories
 
         public async Task UpdateUsuariopAsync(int psicopedagogoId, string token, DateTime ExpiresAt, CancellationToken ct = default)
         {
-            var existingPsicopedagogo = await context.Usuario.FirstOrDefaultAsync(p => p.PsicopedagogoId == psicopedagogoId, ct);
+            var existingPsicopedagogo = await context.Usuario.FirstOrDefaultAsync(p => p.PersonaId == psicopedagogoId, ct);
 
             if (existingPsicopedagogo == null) return;
 
