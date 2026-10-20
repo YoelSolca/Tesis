@@ -160,7 +160,7 @@ export function TablePager({
   onChange: (p: number) => void;
 }) {
   return (
-    <Stack direction="row" className="justify-end">
+    <Stack direction="row" className="justify-end px-4 py-3">
       <Pagination
         count={count}
         page={page}
@@ -181,7 +181,7 @@ export function CenteredPagination({
   onChange: (p: number) => void;
 }) {
   return (
-    <Stack direction="row" className="center">
+    <Stack direction="row" sx={{ justifyContent: "center" }}>
       <Pagination
         count={count}
         page={page}

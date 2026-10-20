@@ -49,6 +49,22 @@ export const obtenerHistorialPaciente = async (token: string, id: string, tipoEj
   }
 }
 
+export const obtenerInformesPaciente = async (token: string, id: string, fecha?: Date, page?: number, pageSize?: number) => {
+  try {
+    const response = await backendApi(token).get(`/api/pacientes/${id}/informes`, {
+      params: {
+        page: page,
+        pageSize: pageSize, 
+        fecha: fecha,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener informes del paciente:", error);
+    throw error;
+  }
+};
+
 export const guardarCambiosPaciente = async (token: string, id: string, paciente: PacienteDetalle) => {
   try {
     const response = await backendApi(token).put(`/api/pacientes/${id}`, paciente);

@@ -4,6 +4,7 @@ import AppLayout from "./layout/AppLayout";
 import PacienteLayout from "./layout/PacienteLayout";
 import Historial from "./pages/paciente/Historial";
 import Informacion from "./pages/paciente/Informacion";
+import Informes from "./pages/paciente/Informes";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/pacientes/:id" element={<PacienteLayout />}>
           <Route path="informacion" element={<Informacion />} />
           <Route path="historial" element={<Historial />} />
+          <Route path="informes" element={<Informes />} />
         </Route>
       </Route>
     </Routes>

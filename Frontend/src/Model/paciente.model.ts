@@ -37,6 +37,17 @@ export interface TipoEjercicio {
 
 export type PacientesResponse = PagedResponse<PacienteListItem>;
 export type HistorialPacienteResponse = PagedResponse<HistorialPacienteItem>;
+export type PacienteInformeResponse = PagedResponse<PacienteInformeItem>;
+
+export interface PacienteInformeItem {
+  id : number;
+  pacienteId : number;
+  fechaGeneracion : Date;
+  psicopedagogoId : number;
+  contenido : string;
+  periodoDesde : Date;
+  periodoHasta : Date;
+}
 
 export interface HistorialPacienteItem {
   sesionId:       number;

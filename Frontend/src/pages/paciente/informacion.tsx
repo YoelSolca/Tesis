@@ -77,9 +77,6 @@ function DatosPersonales({
             />
           </Grid>
           <Grid size={4}>
-            <KeyValue label="Teléfono" value={paciente.telefono} />
-          </Grid>
-          <Grid size={4}>
             <KeyValue label="Dirección" value={paciente.direccion} />
           </Grid>
           <Grid size={4}>
@@ -156,17 +153,6 @@ function DatosPersonales({
                   : "",
               })
             }
-          />
-        </Grid>
-        <Grid size={4}>
-          <TextField
-            fullWidth
-            label="Teléfono"
-            value={editing ? form?.telefono : paciente.telefono}
-            onChange={(e) => {
-              const telefono = e.target.value.replace(/[^\d+\s-]/g, "");
-              form && setForm({ ...form, telefono: telefono });
-            }}
           />
         </Grid>
         <Grid size={4}>
