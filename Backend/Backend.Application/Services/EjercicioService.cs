@@ -1,0 +1,29 @@
+﻿using Backend.Application.Common;
+using Backend.Application.DTO;
+using Backend.Application.Interfaces;
+using Backend.Domain.Entities;
+using Backend.Domain.Interfaces;
+
+namespace Backend.Application.Services
+{
+    public class EjercicioService(
+            IEjercicioRepository ejercicioRepository,
+            IUsuarioActual usuarioActual
+        ) : IEjercicioService
+    {
+        private const int MaxPageSize = 50;
+
+        public async Task<PagedResponse<EjercicioDto>> GetAllEjercicioAsync(EjercicioSearchCriteria criteria, CancellationToken ct = default)
+        {
+            var page = Math.Max(criteria.Page, 1);
+            var pageSize = Math.Clamp(criteria.PageSize, 1, MaxPageSize);
+
+
+            var (items, total) = await ejercicioRepository.GetAllEjercicioAsync(new EjercicioSearchFilter(criteria.tipoEjercicioId),
+                (page - 1) * pageSize, pageSize, ct);
+
+            return new PagedResponse<EjercicioDto>(items.Select(EjercicioDto.FromEntity).ToList(), total, page, pageSize);
+        }
+
+    }
+}

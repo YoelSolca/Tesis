@@ -19,3 +19,6 @@
 *.suo
 /Backend/Backend.Api/.vs/ProjectEvaluation
 /Backend/.vs/Backend.Api.slnx/v18
+/Backend/.vs/Backend.Api.slnx/DesignTimeBuild/.dtbcache.v2
+/Backend/.vs
+/Backend/src/obj/Backend.Infrastructure.EntityFrameworkCore.targets

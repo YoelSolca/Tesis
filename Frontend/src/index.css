@@ -1,0 +1,24 @@
+/*
+  Orden de las capas de CSS: Tailwind (utilities) queda por encima de MUI, así que una clase
+  como `p-4` pisa los estilos de un componente de MUI.
+  Se importa solo `theme` y `utilities`: se omite el reset (preflight) de Tailwind para no
+  alterar el aspecto actual de las vistas, que ya usa CssBaseline de MUI.
+
+  Convenciones al pasar un `sx` de MUI a clases de Tailwind:
+  - Espaciado: el valor de MUI se duplica (MUI usa 8px por unidad y Tailwind 4px).
+    Ej.: `gap: 2` -> `gap-4`, `p: 3` -> `p-6`, `px: 1.5` -> `px-3`.
+  - Breakpoints: se igualan a los de MUI (sm 600, md 900, lg 1200, xl 1536) para que el
+    comportamiento responsive no cambie. Ej.: `{ xs: 2, md: 5 }` -> `px-4 md:px-10`.
+  - Se quedan en `sx` los estilos que dependen del tema (colores como `primary.main` o
+    `text.secondary`, `divider`), los valores calculados en JavaScript y los selectores anidados.
+*/
+@layer theme, base, mui, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@theme {
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 900px;
+  --breakpoint-lg: 1200px;
+  --breakpoint-xl: 1536px;
+}
