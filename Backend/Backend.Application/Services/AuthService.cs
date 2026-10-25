@@ -24,7 +24,7 @@ namespace Backend.Application.Services
 
             logger.LogInformation("Psicopedagogo{PsicopedagogoId} logueado ", usuario.PersonaId);
 
-            return Result<LoginResponse>.Success(new LoginResponse(token, expiresAt, usuario.PersonaId, usuario.Persona.Nombre));
+            return Result<LoginResponse>.Success(new LoginResponse(token, expiresAt, usuario.PersonaId, usuario.Persona.Nombre, usuario.Estado, usuario.Rol));
         }
 
         public async Task<Result<ForgotPasswordRequest>> ForgotPasswordAsync(string correoElectronico, CancellationToken ct = default)
@@ -38,7 +38,7 @@ namespace Backend.Application.Services
 
             await usuarioRepository.UpdateUsuariopAsync(existing.PersonaId, token, expiresAt, ct);
 
-            await usuarioRepository.sendEmail(correoElectronico, ct);
+            await usuarioRepository.sendEmail(correoElectronico,token, ct);
 
             logger.LogInformation("Contraseña restablecida para el usuario {PsicopedagogoId}", existing.PersonaId);
 

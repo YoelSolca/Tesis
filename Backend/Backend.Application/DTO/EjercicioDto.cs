@@ -2,9 +2,9 @@
 
 namespace Backend.Application.DTO;
 
-public record EjercicioDto(int id, string nombre, string tipoEjercicio)
+public record EjercicioDto(int id, string nombre, string tipoEjercicio, string descripcion)
 {
-    public static EjercicioDto FromEntity(Ejercicio e) => new(e.Id, e.Nombre, e.TipoEjercicio.Nombre);
+    public static EjercicioDto FromEntity(Ejercicio e) => new(e.Id, e.Nombre, e.TipoEjercicio.Nombre, e.Descripcion);
 }
 
 

@@ -16,8 +16,8 @@ namespace Backend.Application.Services
         {
             var psicopedagogo = new Psicopedagogo
             {
-                Avatar = request.Avatar,
                 Telefono = request.Telefono,
+                Matricula = request.Matricula,
                 Persona = new Persona
                 {
                     Nombre = request.Nombre,
@@ -30,7 +30,8 @@ namespace Backend.Application.Services
                         CorreoElectronico = request.CorreoElectronico,
                         Contrasenia = contraseniaHasher.Hash(request.Contrasenia),
                         FechaAlta = DateTime.Now,
-                        // Rol y Estado toman sus valores por defecto: Psicopedagogo y Pendiente de aprobación.
+                        AceptoTerminos = request.AceptoTerminos,
+                        Rol = RolUsuario.Psicopedagogo
                     }
                 }
             };

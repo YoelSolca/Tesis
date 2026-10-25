@@ -22,7 +22,7 @@ namespace Backend.Api.Controllers
 
 
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword(string correoElectronico)
+        public async Task<IActionResult> ForgotPassword([FromBody] string correoElectronico)
         {
             var result = await authService.ForgotPasswordAsync(correoElectronico);
 
@@ -32,9 +32,9 @@ namespace Backend.Api.Controllers
         }
 
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword(string token, string nuevaContrasenia)
+        public async Task<IActionResult> ResetPassword(ResetPassword resetPassword)
         {
-            var result = await authService.ResetPasswordAsync(token, nuevaContrasenia);
+            var result = await authService.ResetPasswordAsync(resetPassword.Token, resetPassword.NuevaContrasenia);
             return result.IsSuccess
                 ? Ok(result.Value)
                 : Problem(detail: result.Error, statusCode: StatusCodes.Status401Unauthorized, title: result.ErrorCode);

@@ -15,13 +15,14 @@ public record PsicopedagogoDto(int PersonaId, string CorreoElectronico, string C
 
 public record CreatePsicopedagogoRequest(
     [Required, StringLength(50)] string CorreoElectronico,
-    [Required, StringLength(16)] string Contrasenia,
-    [StringLength(250)] string? Avatar,
+    [Required, RegularExpression(ReglasContrasenia.Patron, ErrorMessage = ReglasContrasenia.Mensaje)] string Contrasenia,
     [Required, StringLength(100)] string Nombre,
     [StringLength(100)] string Apellido,
     [StringLength(20)] string Telefono,
     [StringLength(20)] string Documento,
     [StringLength(1)] string Genero,
+    [Required] string Matricula,
+    [Required] bool AceptoTerminos,
     DateOnly FechaNacimiento,
     DateTime FechaAlta
 );

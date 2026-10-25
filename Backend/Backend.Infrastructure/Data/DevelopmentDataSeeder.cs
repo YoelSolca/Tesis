@@ -6,12 +6,13 @@ using Microsoft.Extensions.Logging;
 namespace Backend.Infrastructure.Data
 {
     /// <summary>
-    /// Datos de prueba solo para desarrollo: 1 psicopedagogo con 3 pacientes, sesiones, resultados e informe.
-    /// Es idempotente: si el psicopedagogo ya existe, no hace nada. Los catálogos los siembran las migraciones.
+    /// Datos de prueba solo para desarrollo: 1 administrador y 1 psicopedagogo con 3 pacientes, sesiones, resultados e informe.
+    /// Es idempotente: si el administrador o el psicopedagogo ya existen, no los vuelve a crear. Los catálogos los siembran las migraciones.
     /// </summary>
     public class DevelopmentDataSeeder(AppDbContext context, IPasswordHasher hasher, ILogger<DevelopmentDataSeeder> logger)
     {
         private const string DocumentoPsicopedagogo = "30111222";
+        private const string DocumentoAdministrador = "28999000";
         private const string Obs = "Se observa buena concentración en la primera parte. En la segunda aumentan los errores por distracción. Se recomienda continuar con actividades visuales.";
 
         // Ids del catálogo sembrado por las migraciones.
@@ -21,6 +22,39 @@ namespace Backend.Infrastructure.Data
         private const int Movimientos = 1;
 
         public async Task SeedAsync(CancellationToken ct = default)
+        {
+            await SeedAdministradorAsync(ct);
+            await SeedPsicopedagogoAsync(ct);
+        }
+
+        private async Task SeedAdministradorAsync(CancellationToken ct)
+        {
+            if (await context.Persona.AnyAsync(p => p.Documento == DocumentoAdministrador, ct)) return;
+
+            var ahora = DateTime.Now;
+
+            var admin = new Administrador
+            {
+                Persona = NuevaPersona("Martín", "Ruiz", DocumentoAdministrador, "M", new DateOnly(1980, 9, 2))
+            };
+            admin.Persona.Usuario = new Usuario
+            {
+                CorreoElectronico = "admin@demo.com",
+                Contrasenia = hasher.Hash("Admin1234!"),
+                FechaAlta = ahora,
+                Rol = RolUsuario.Administrador,
+                Estado = EstadoCuenta.Aprobado,
+                FechaSolicitud = ahora,
+                AceptoTerminos = true,
+                FechaAceptacionTerminos = ahora
+            };
+
+            context.Administrador.Add(admin);
+            await context.SaveChangesAsync(ct);
+            logger.LogInformation("Administrador de desarrollo sembrado (usuario admin@demo.com).");
+        }
+
+        private async Task SeedPsicopedagogoAsync(CancellationToken ct)
         {
             if (await context.Persona.AnyAsync(p => p.Documento == DocumentoPsicopedagogo, ct)) return;
 
