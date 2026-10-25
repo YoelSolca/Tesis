@@ -1,5 +1,5 @@
-import backendApi from "./api/backendApi";
 import { TipoEjercicio } from "../Model/paciente.model";
+import { backendApi } from "./api/backendApi";
 
 export const filtrarHistorialPacientePorTipoEjercicio = async (token: string) : Promise<TipoEjercicio[]> => {
 try {

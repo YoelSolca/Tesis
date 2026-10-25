@@ -12,7 +12,7 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/600.css";
 import "@fontsource/roboto/700.css";
 import theme from "./theme";
-import App from "./App.tsx";
+import App, { AuthProvider } from "./App.tsx";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
@@ -22,12 +22,14 @@ createRoot(document.getElementById("root")!).render(
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <BrowserRouter>
-          <LocalizationProvider
-            dateAdapter={AdapterDayjs}
-            adapterLocale="es-AR"
-          >
-            <App />
-          </LocalizationProvider>
+          <AuthProvider>
+            <LocalizationProvider
+              dateAdapter={AdapterDayjs}
+              adapterLocale="es-AR"
+            >
+              <App />
+            </LocalizationProvider>
+          </AuthProvider>
         </BrowserRouter>
       </ThemeProvider>
     </StyledEngineProvider>

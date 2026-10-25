@@ -1,5 +1,5 @@
 import { TipoDificultad } from "../Model/paciente.model";
-import backendApi from "./api/backendApi";
+import { backendApi } from "./api/backendApi";
 
 
 

@@ -1,6 +1,6 @@
 import { HistorialPacienteResponse, PacientesResponse } from "../Model/paciente.model";
 import { PacienteDetalle } from "../Model/PacienteDetalle.model";
-import backendApi from "./api/backendApi";
+import { backendApi } from "./api/backendApi";
 
 export const obtenerPacientes = async (token: string, search: string, tipoDificultadId?: number, page: number = 1): Promise<PacientesResponse> => {
   try {
